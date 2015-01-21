@@ -4,15 +4,24 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/scan_actual"
+        android:layout_alignParentTop="true"
+        android:textStyle="bold" />
+
     <ListView
         android:id="@+id/wifiListView"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:drawSelectorOnTop="false"
         android:background="@android:color/background_light"
         android:listSelector="@android:color/white"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="false">
+        android:layout_below="@+id/scan_actual"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="false">
     </ListView>
+
 </RelativeLayout>

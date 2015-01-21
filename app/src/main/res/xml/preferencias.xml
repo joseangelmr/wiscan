@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Opciones de experimento">
+        <EditTextPreference android:key="max_scan"
+            android:title="Número máximo de escaneos"
+            android:summary="Indique el número máximo de escaneos para cada experimento"
+            android:dialogTitle="Número máximo de escaneos"
+            android:inputType="number"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

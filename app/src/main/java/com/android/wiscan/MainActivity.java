@@ -3,6 +3,7 @@ package com.android.wiscan;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
@@ -10,6 +11,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -34,11 +37,12 @@ public class MainActivity extends ActionBarActivity implements
     private WifiManager mainWifiObj;
     private WifiReceiver wifiReceiver;
     private ListView wifiList;
+    private TextView scaneos;
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private int num_scan=0;
     private Timer timer;
-
+    int max_scan_aux;
     private  void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -51,6 +55,9 @@ public class MainActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+
+
 
         wifiList = (ListView)findViewById(R.id.wifiListView);
         wifiList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -76,7 +83,14 @@ public class MainActivity extends ActionBarActivity implements
         buildGoogleApiClient();
         wifiReceiver = new WifiReceiver(this,mainWifiObj,wifiList);
         //num_scan;
-        Asyncwifi();
+       // Asyncwifi();
+        scaneos = (TextView)findViewById(R.id.scan_actual);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+//        if( pref.contains("max_scan"))
+        max_scan_aux = Integer.valueOf(pref.getString("max_scan","100"));
+        Log.i("", "Maximos scaneos: " + max_scan_aux);
+        scaneos.setText("0 / "+String.valueOf(max_scan_aux));
+
     }
 
     //Ojo prueba de scan periodico
@@ -116,57 +130,62 @@ public class MainActivity extends ActionBarActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
+            case R.id.action_start:
+                mGoogleApiClient.connect();
+                //timer.cancel();
+                return true;
             case R.id.action_stop:
-                item.setTitle("INICIAR");
                 timer.cancel();
                 return true;
-            case R.id.action_nada:
-                Toast.makeText(this,"HACIENDO NADA...",Toast.LENGTH_SHORT).show();
-                RedesDBHelper mDbHelper = new RedesDBHelper(this);
-                SQLiteDatabase db = mDbHelper.getReadableDatabase();
+            case R.id.action_options:
+//                Toast.makeText(this,"HACIENDO NADA...",Toast.LENGTH_SHORT).show();
+//                RedesDBHelper mDbHelper = new RedesDBHelper(this);
+//                SQLiteDatabase db = mDbHelper.getReadableDatabase();
+                startActivity(new Intent(MainActivity.this,
+                        OpcionesActivity.class));
 
 
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
-                String[] projection = null;
-
-// How you want the results sorted in the resulting Cursor
-                String sortOrder =null;
-
-                Cursor c = db.query(
-                        RedesContract.Red.TABLE_NAME,  // The table to query
-                        projection,                               // The columns to return
-                        null,                                // The columns for the WHERE clause
-                        null,                            // The values for the WHERE clause
-                        null,                                     // don't group the rows
-                        null,                                     // don't filter by row groups
-                        sortOrder                                 // The sort order
-                );
-                while (c.moveToNext()) {
-                    String BSSID = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_BSSID));
-                    String SSID = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_SSID));
-                    String NIVEL = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_INTENSIDAD));
-                    String FREC = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_FRECUENCIA));
-                    String SEGU = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_SEGURIDAD));
-                    String LONGI = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LONGITUD));
-                    String LATI = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LATITUD));
-                    String TIME = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_TIEMPO));
-                    String NS = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_NUMSCAN));
-
-                    Log.v("PRUEBA SCAN",BSSID+" "+
-                            SSID+" "+
-                            NIVEL+" "+
-                            FREC+" "+
-                            SEGU+" "+
-                            TIME+" "+
-                            LONGI+" "+
-                            LATI+" "+
-                            NS
-                    );
-
-                }
-
-                return true;
+//                String[] projection = null;
+//
+//// How you want the results sorted in the resulting Cursor
+//                String sortOrder =null;
+//
+//                Cursor c = db.query(
+//                        RedesContract.Red.TABLE_NAME,  // The table to query
+//                        projection,                               // The columns to return
+//                        null,                                // The columns for the WHERE clause
+//                        null,                            // The values for the WHERE clause
+//                        null,                                     // don't group the rows
+//                        null,                                     // don't filter by row groups
+//                        sortOrder                                 // The sort order
+//                );
+//                while (c.moveToNext()) {
+//                    String BSSID = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_BSSID));
+//                    String SSID = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_SSID));
+//                    String NIVEL = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_INTENSIDAD));
+//                    String FREC = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_FRECUENCIA));
+//                    String SEGU = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_SEGURIDAD));
+//                    String LONGI = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LONGITUD));
+//                    String LATI = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LATITUD));
+//                    String TIME = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_TIEMPO));
+//                    String NS = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_NUMSCAN));
+//
+//                    Log.v("PRUEBA SCAN",BSSID+" "+
+//                            SSID+" "+
+//                            NIVEL+" "+
+//                            FREC+" "+
+//                            SEGU+" "+
+//                            TIME+" "+
+//                            LONGI+" "+
+//                            LATI+" "+
+//                            NS
+//                    );
+//
+//                }
+//
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -175,7 +194,7 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
     }
 
     @Override
@@ -212,6 +231,7 @@ public class MainActivity extends ActionBarActivity implements
             long seconds = c.getTime().getTime();
             wifiReceiver.setVars(seconds,num_scan,mLastLocation.getLongitude(),mLastLocation.getLatitude());
             num_scan++;
+            scaneos.setText(String.valueOf(num_scan)+ " / "+String.valueOf(max_scan_aux));
             mainWifiObj.startScan();
             Log.v("PRUEBA-SCAN","NUMERO DE SCAN: "+num_scan);
         }

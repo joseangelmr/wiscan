@@ -26,5 +26,8 @@
             android:name="com.android.wiscan.SimpleXYPlotActivity"
             android:label="Plot" >
         </activity>
+        <activity android:name=".OpcionesActivity"
+            android:label="Opciones">
+        </activity>
     </application>
 </manifest>
