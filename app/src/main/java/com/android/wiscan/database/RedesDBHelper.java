@@ -1,4 +1,4 @@
-package com.android.wiscan;
+package com.android.wiscan.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,8 +28,10 @@ public class RedesDBHelper extends SQLiteOpenHelper {
                     RedesContract.Red.COLUMN_NAME_SEGURIDAD + TEXT_TYPE + COMMA_SEP +
                     RedesContract.Red.COLUMN_NAME_FRECUENCIA + INTEGER_TYPE + COMMA_SEP +
                     RedesContract.Red.COLUMN_NAME_INTENSIDAD + INTEGER_TYPE + COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_LATITUD + REAL_TYPE+ COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_LONGITUD + REAL_TYPE +
+                    RedesContract.Red.COLUMN_NAME_LATITUD_I + REAL_TYPE+ COMMA_SEP +
+                    RedesContract.Red.COLUMN_NAME_LONGITUD_I + REAL_TYPE + COMMA_SEP +
+                    RedesContract.Red.COLUMN_NAME_LATITUD_F + REAL_TYPE+ COMMA_SEP +
+                    RedesContract.Red.COLUMN_NAME_LONGITUD_F + REAL_TYPE +
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =

@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import java.util.Map;
  */
 public class WifiListAdapter extends ArrayAdapter<ScanResult>{
 
-    public WifiListAdapter(Context context, int resource, ScanResult[] objects) {
+    public WifiListAdapter(Context context, int resource, ArrayList<ScanResult> objects) {
         super(context, resource, objects);
     }
 

@@ -7,6 +7,5 @@
             android:summary="Indique el número máximo de escaneos para cada experimento"
             android:dialogTitle="Número máximo de escaneos"
             android:inputType="number"/>
-
     </PreferenceCategory>
 </PreferenceScreen>

@@ -10,7 +10,6 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -23,45 +22,53 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
+import com.android.wiscan.database.RedesContract;
+import com.android.wiscan.database.RedesDBHelper;
+import com.android.wiscan.preferencias.PreferenciasActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
 
-public class MainActivity extends ActionBarActivity implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends ActionBarActivity {
 
     private WifiManager mainWifiObj;
     private WifiReceiver wifiReceiver;
     private ListView wifiList;
     private TextView scaneos;
-    private Location mLastLocation;
-    private GoogleApiClient mGoogleApiClient;
+    private Location location_ini;
+
+    public GoogleApiClient mGoogleApiClient;
     private int num_scan=0;
-    private Timer timer;
-    int max_scan_aux;
+    int max_scan_pref;
+
+    //private Timer timer;
+
     private  void buildGoogleApiClient() {
+        GooglePlayCallbacks gpCallbacks;
+        gpCallbacks = new GooglePlayCallbacks(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
+                .addConnectionCallbacks(gpCallbacks)
+                .addOnConnectionFailedListener(gpCallbacks)
                 .addApi(LocationServices.API)
                 .build();
     }
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main);
-
-
-
-
+    private void configurarWifiList() {
         wifiList = (ListView)findViewById(R.id.wifiListView);
         wifiList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+//        try {
+        WifiListAdapter adapter = new WifiListAdapter(this,R.layout.wifiitem,new ArrayList<ScanResult>());
+        wifiList.setAdapter(adapter);
+  //      }
+    //    catch (NullPointerException e){
+      //      Log.v("PRUEBA NULL DATA",e.toString());
+        //}
+
+
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            //TODO Implementar funcionalidad correcta
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(),"SE SELECCIONO LA POSICION: "+position,Toast.LENGTH_SHORT).show();
@@ -73,57 +80,124 @@ public class MainActivity extends ActionBarActivity implements
                 startActivity(intent);
             }
         });
+    }
+
+    private void updateNumScan() {
+        scaneos.setText("Scan: "+String.valueOf(num_scan)+" / "+String.valueOf(max_scan_pref));
+    }
+
+    public void scanearRedes() {
+        if(num_scan<max_scan_pref) {
+            location_ini = LocationServices.
+                    FusedLocationApi.
+                    getLastLocation(mGoogleApiClient);
+            if (location_ini != null) {
+                long seconds = Calendar.getInstance().getTime().getTime();
+                if (mainWifiObj.startScan()) {
+                    num_scan++;
+                    updateNumScan();
+                    wifiReceiver.updateValues(seconds, num_scan, location_ini);
+                }
+            }
+        }
+        else
+            //TODO crear metodo para mostrar el cuadro de exportar la data
+            imprimirDBenLog();
+    }
+
+    private void imprimirDBenLog() {
+        RedesDBHelper DbHelper;
+        DbHelper = new RedesDBHelper(this);
+        SQLiteDatabase db= DbHelper.getReadableDatabase();
+
+
+        Cursor c = db.query(
+                RedesContract.Red.TABLE_NAME,  // The table to query
+                null,                               // The columns to return
+                null,                                // The columns for the WHERE clause
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                 // The sort order
+        );
+        while(c.moveToNext()){
+            String BSSID = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_BSSID));
+                    String SSID = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_SSID));
+                    String NIVEL = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_INTENSIDAD));
+                    String FREC = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_FRECUENCIA));
+                    String SEGU = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_SEGURIDAD));
+                    String LONGI_I = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LONGITUD_I));
+                    String LATI_I = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LATITUD_I));
+                    String LONGI_F = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LONGITUD_F));
+                    String LATI_F = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LATITUD_F));
+                    String TIME = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_TIEMPO));
+                    String NS = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_NUMSCAN));
+
+                    Log.v("PRUEBA SCAN",BSSID+" "+
+                            LONGI_I+" "+
+                            LATI_I+" "+
+                            SSID+" "+
+                            NIVEL+" "+
+                            FREC+" "+
+                            SEGU+" "+
+                            TIME+" "+
+                            LONGI_F+" "+
+                            LATI_F+" "+
+                            NS
+                    );
+        }
+    }
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        configurarWifiList();
 
         mainWifiObj = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         if(!mainWifiObj.isWifiEnabled()){
             Toast.makeText(this,"Encendiendo Wifi",Toast.LENGTH_SHORT).show();
             mainWifiObj.setWifiEnabled(true);
         }
-
         buildGoogleApiClient();
         wifiReceiver = new WifiReceiver(this,mainWifiObj,wifiList);
-        //num_scan;
-       // Asyncwifi();
         scaneos = (TextView)findViewById(R.id.scan_actual);
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-//        if( pref.contains("max_scan"))
-        max_scan_aux = Integer.valueOf(pref.getString("max_scan","100"));
-        Log.i("", "Maximos scaneos: " + max_scan_aux);
-        scaneos.setText("0 / "+String.valueOf(max_scan_aux));
-
     }
 
     //Ojo prueba de scan periodico
-    public void Asyncwifi() {
-        final Handler  whandler = new Handler();
-        timer = new Timer();
-        TimerTask doAsynchronousTask = new TimerTask() {
-
-            @Override
-            public void run() {
-                whandler.post(new Runnable() {
-                    public void run() {
-                        try {
-                            //mainWifiObj.startScan();
-                            mGoogleApiClient.reconnect();
-                        }catch (Exception e) {}
-                    }
-                });
-            }
-        };
-        timer.schedule(doAsynchronousTask, 0, 5000); // Repeate in every 5 sec
-
-    }
-
-
-
+    //NO USADO. Se desea scanear apenas termine otro scan
+//    public void Asyncwifi() {
+//        final Handler  whandler = new Handler();
+//        timer = new Timer();
+//        TimerTask doAsynchronousTask = new TimerTask() {
+//
+//            @Override
+//            public void run() {
+//                whandler.post(new Runnable() {
+//                    public void run() {
+//                        try {
+//                            //mainWifiObj.startScan();
+//                            mGoogleApiClient.reconnect();
+//                        }catch (Exception e) {}
+//                    }
+//                });
+//            }
+//        };
+//        timer.schedule(doAsynchronousTask, 0, 5000); // Repeate in every 5 sec
+//
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.getItem(1).setEnabled(true);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -132,60 +206,18 @@ public class MainActivity extends ActionBarActivity implements
         switch (item.getItemId()) {
             case R.id.action_start:
                 mGoogleApiClient.connect();
-                //timer.cancel();
+                invalidateOptionsMenu();
+                //TODO Implementar funcionalidad correcta
+                mainWifiObj.startScan();
                 return true;
             case R.id.action_stop:
-                timer.cancel();
+                //TODO Implementar funcionalidad correcta
+                //timer.cancel();
                 return true;
             case R.id.action_options:
-//                Toast.makeText(this,"HACIENDO NADA...",Toast.LENGTH_SHORT).show();
-//                RedesDBHelper mDbHelper = new RedesDBHelper(this);
-//                SQLiteDatabase db = mDbHelper.getReadableDatabase();
                 startActivity(new Intent(MainActivity.this,
-                        OpcionesActivity.class));
-
-
-// Define a projection that specifies which columns from the database
-// you will actually use after this query.
-//                String[] projection = null;
-//
-//// How you want the results sorted in the resulting Cursor
-//                String sortOrder =null;
-//
-//                Cursor c = db.query(
-//                        RedesContract.Red.TABLE_NAME,  // The table to query
-//                        projection,                               // The columns to return
-//                        null,                                // The columns for the WHERE clause
-//                        null,                            // The values for the WHERE clause
-//                        null,                                     // don't group the rows
-//                        null,                                     // don't filter by row groups
-//                        sortOrder                                 // The sort order
-//                );
-//                while (c.moveToNext()) {
-//                    String BSSID = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_BSSID));
-//                    String SSID = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_SSID));
-//                    String NIVEL = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_INTENSIDAD));
-//                    String FREC = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_FRECUENCIA));
-//                    String SEGU = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_SEGURIDAD));
-//                    String LONGI = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LONGITUD));
-//                    String LATI = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LATITUD));
-//                    String TIME = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_TIEMPO));
-//                    String NS = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_NUMSCAN));
-//
-//                    Log.v("PRUEBA SCAN",BSSID+" "+
-//                            SSID+" "+
-//                            NIVEL+" "+
-//                            FREC+" "+
-//                            SEGU+" "+
-//                            TIME+" "+
-//                            LONGI+" "+
-//                            LATI+" "+
-//                            NS
-//                    );
-//
-//                }
-//
-//                return true;
+                                        PreferenciasActivity.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -194,7 +226,9 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        //mGoogleApiClient.connect();
+//        mGoogleApiClient.connect();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        max_scan_pref = Integer.valueOf(pref.getString("max_scan","100"));
     }
 
     @Override
@@ -205,46 +239,14 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
-
     protected void onPause() {
         unregisterReceiver(wifiReceiver);
         super.onPause();
     }
 
     protected void onResume() {
-        registerReceiver(wifiReceiver, new IntentFilter(
-                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        registerReceiver(wifiReceiver,
+                        new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         super.onResume();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        Log.v("PRUEBA-LOCALIZACION","LLEGO A LA PARTE DE MLASTLOCATION");
-        if (mLastLocation != null) {
-            Log.v("PRUEBA-LOCALIZACION",String.valueOf("("+mLastLocation.getLatitude()+","+mLastLocation.getLongitude()+")"));
-//            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-//            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
-            Toast.makeText(this,String.valueOf("("+mLastLocation.getLatitude()+","+mLastLocation.getLongitude()+")"),Toast.LENGTH_LONG).show();
-            Calendar c = Calendar.getInstance();
-            long seconds = c.getTime().getTime();
-            wifiReceiver.setVars(seconds,num_scan,mLastLocation.getLongitude(),mLastLocation.getLatitude());
-            num_scan++;
-            scaneos.setText(String.valueOf(num_scan)+ " / "+String.valueOf(max_scan_aux));
-            mainWifiObj.startScan();
-            Log.v("PRUEBA-SCAN","NUMERO DE SCAN: "+num_scan);
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(this,"FALLO LA CONEXION A GOOGLE PLAY",Toast.LENGTH_LONG).show();
-        Log.v("PRUEBA-LOCALIZACION","FALLO LA CONEXION A GOOGLE PLAY");
     }
 }
