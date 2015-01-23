@@ -1,13 +1,14 @@
 package com.android.wiscan;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -37,13 +38,16 @@ public class MainActivity extends ActionBarActivity {
     private WifiReceiver wifiReceiver;
     private ListView wifiList;
     private TextView scaneos;
-    private Location location_ini;
+
+    public boolean isScanning() {
+        return keep_scaning;
+    }
+
+    private boolean keep_scaning = false;
+    private int num_scan=0;
+    private int max_scan_pref;
 
     public GoogleApiClient mGoogleApiClient;
-    private int num_scan=0;
-    int max_scan_pref;
-
-    //private Timer timer;
 
     private  void buildGoogleApiClient() {
         GooglePlayCallbacks gpCallbacks;
@@ -58,22 +62,15 @@ public class MainActivity extends ActionBarActivity {
     private void configurarWifiList() {
         wifiList = (ListView)findViewById(R.id.wifiListView);
         wifiList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-//        try {
-        WifiListAdapter adapter = new WifiListAdapter(this,R.layout.wifiitem,new ArrayList<ScanResult>());
+        WifiListAdapter adapter = new WifiListAdapter(this,R.layout.wifiitem,new ArrayList<MyScanResult>());
         wifiList.setAdapter(adapter);
-  //      }
-    //    catch (NullPointerException e){
-      //      Log.v("PRUEBA NULL DATA",e.toString());
-        //}
-
-
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             //TODO Implementar funcionalidad correcta
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(),"SE SELECCIONO LA POSICION: "+position,Toast.LENGTH_SHORT).show();
-                String aux = ((ScanResult)adapterView.getItemAtPosition(position)).toString();
-                Log.v("PRUEBA-ITEM-SELECT",aux);
+                //String aux = ((MyScanResult)adapterView.getItemAtPosition(position)).toString();
+                //Log.v("PRUEBA-ITEM-SELECT",aux);
                 Intent intent = new Intent(getApplicationContext(),SimpleXYPlotActivity.class);
                 String message = "MENSAJE DE PRUEBA";
                 intent.putExtra(Intent.EXTRA_TEXT, message);
@@ -82,30 +79,50 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    private void updateNumScan() {
+    public void updateNumScan() {
         scaneos.setText("Scan: "+String.valueOf(num_scan)+" / "+String.valueOf(max_scan_pref));
     }
 
     public void scanearRedes() {
-        if(num_scan<max_scan_pref) {
-            location_ini = LocationServices.
+        if(num_scan<max_scan_pref && keep_scaning) {
+            Location location_ini = LocationServices.
                     FusedLocationApi.
                     getLastLocation(mGoogleApiClient);
             if (location_ini != null) {
                 long seconds = Calendar.getInstance().getTime().getTime();
                 if (mainWifiObj.startScan()) {
                     num_scan++;
-                    updateNumScan();
+                    //updateNumScan();
                     wifiReceiver.updateValues(seconds, num_scan, location_ini);
                 }
             }
         }
-        else
+        else {
+            stop_scan();
             //TODO crear metodo para mostrar el cuadro de exportar la data
-            imprimirDBenLog();
+            //Y limpiar la DB luego de hacerlo
+          //  imprimirDBenLog();
+        }
     }
 
-    private void imprimirDBenLog() {
+    private void stop_scan() {
+        keep_scaning = false;
+        num_scan=0;
+        //updateNumScan();
+        invalidateOptionsMenu();
+//        Dialog dialog = new Dialog(this);
+//        dialog.setCancelable(true);
+//        dialog.setTitle("Desea exportar o descartar la data?");
+//        dialog.show();
+        DialogHelper dialogHelper = new DialogHelper(this);
+        dialogHelper.showSelectionDialog();
+        //TODO OJO.. Hacer esto en el dialog helper
+        //RedesDBHelper dbHelper = new RedesDBHelper(this);
+        //Eliminacion de la BD para cada experimento
+        //dbHelper.onUpgrade(dbHelper.getWritableDatabase(),1,1);
+    }
+
+    public void imprimirDBenLog() {
         RedesDBHelper DbHelper;
         DbHelper = new RedesDBHelper(this);
         SQLiteDatabase db= DbHelper.getReadableDatabase();
@@ -132,6 +149,7 @@ public class MainActivity extends ActionBarActivity {
                     String LATI_F = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LATITUD_F));
                     String TIME = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_TIEMPO));
                     String NS = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_NUMSCAN));
+                    String PROB = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_PROBABILIDAD));
 
                     Log.v("PRUEBA SCAN",BSSID+" "+
                             LONGI_I+" "+
@@ -143,6 +161,7 @@ public class MainActivity extends ActionBarActivity {
                             TIME+" "+
                             LONGI_F+" "+
                             LATI_F+" "+
+                            PROB+" "+
                             NS
                     );
         }
@@ -164,29 +183,6 @@ public class MainActivity extends ActionBarActivity {
         scaneos = (TextView)findViewById(R.id.scan_actual);
     }
 
-    //Ojo prueba de scan periodico
-    //NO USADO. Se desea scanear apenas termine otro scan
-//    public void Asyncwifi() {
-//        final Handler  whandler = new Handler();
-//        timer = new Timer();
-//        TimerTask doAsynchronousTask = new TimerTask() {
-//
-//            @Override
-//            public void run() {
-//                whandler.post(new Runnable() {
-//                    public void run() {
-//                        try {
-//                            //mainWifiObj.startScan();
-//                            mGoogleApiClient.reconnect();
-//                        }catch (Exception e) {}
-//                    }
-//                });
-//            }
-//        };
-//        timer.schedule(doAsynchronousTask, 0, 5000); // Repeate in every 5 sec
-//
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -196,23 +192,28 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.getItem(1).setEnabled(true);
+        menu.getItem(0).setEnabled(!keep_scaning);
+        menu.getItem(1).setEnabled(keep_scaning);
+        menu.getItem(2).setEnabled(!keep_scaning);
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_start:
-                mGoogleApiClient.connect();
+                keep_scaning = true;
+                updateNumScan();
+                if(mGoogleApiClient.isConnected())
+                    mGoogleApiClient.reconnect();
+                else
+                    mGoogleApiClient.connect();
                 invalidateOptionsMenu();
-                //TODO Implementar funcionalidad correcta
-                mainWifiObj.startScan();
                 return true;
             case R.id.action_stop:
-                //TODO Implementar funcionalidad correcta
-                //timer.cancel();
+                //TODO Implementar funcionalidad de exportar la data (Abrir el dialogo)
+                stop_scan();
+                //keep_scaning = false;
                 return true;
             case R.id.action_options:
                 startActivity(new Intent(MainActivity.this,
@@ -226,9 +227,9 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        mGoogleApiClient.connect();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        max_scan_pref = Integer.valueOf(pref.getString("max_scan","100"));
+        max_scan_pref = Integer.valueOf(pref.getString("max_scan","100"));/*100 Por defecto*/
+        updateNumScan();
     }
 
     @Override

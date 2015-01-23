@@ -27,8 +27,6 @@ public class GooglePlayCallbacks implements GoogleApiClient.ConnectionCallbacks,
         mActivity.scanearRedes();
     }
 
-
-
     @Override
     public void onConnectionSuspended(int i) {
 

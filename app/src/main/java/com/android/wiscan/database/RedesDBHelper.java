@@ -11,7 +11,7 @@ public class RedesDBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "Redes.db";
+    public static final String DATABASE_NAME = "wiscan.db";
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String REAL_TYPE = " REAL";
@@ -31,11 +31,22 @@ public class RedesDBHelper extends SQLiteOpenHelper {
                     RedesContract.Red.COLUMN_NAME_LATITUD_I + REAL_TYPE+ COMMA_SEP +
                     RedesContract.Red.COLUMN_NAME_LONGITUD_I + REAL_TYPE + COMMA_SEP +
                     RedesContract.Red.COLUMN_NAME_LATITUD_F + REAL_TYPE+ COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_LONGITUD_F + REAL_TYPE +
+                    RedesContract.Red.COLUMN_NAME_LONGITUD_F + REAL_TYPE + COMMA_SEP +
+                    RedesContract.Red.COLUMN_NAME_PROBABILIDAD + REAL_TYPE +
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + RedesContract.Red.TABLE_NAME;
+
+    public static final String SQL_COUNT_NETWORK =
+            "SELECT COUNT("+RedesContract.Red.COLUMN_NAME_BSSID+") AS detecciones FROM "+
+            RedesContract.Red.TABLE_NAME+" WHERE "+
+            RedesContract.Red.COLUMN_NAME_BSSID+" = ?";
+
+    public static final String SQL_GET_PLOT_DATA =
+            "SELECT ("+RedesContract.Red.COLUMN_NAME_BSSID+") AS detecciones FROM "+
+                    RedesContract.Red.TABLE_NAME+" WHERE "+
+                    RedesContract.Red.COLUMN_NAME_BSSID+" = ?";
 
     public RedesDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -44,8 +55,6 @@ public class RedesDBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_ENTRIES);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // This database is only a cache for online data, so its upgrade policy is
-        // to simply to discard the data and start over
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }

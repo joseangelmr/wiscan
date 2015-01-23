@@ -17,9 +17,9 @@ import java.util.Map;
 /**
  * Created by David on 15/01/2015.
  */
-public class WifiListAdapter extends ArrayAdapter<ScanResult>{
+public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
 
-    public WifiListAdapter(Context context, int resource, ArrayList<ScanResult> objects) {
+    public WifiListAdapter(Context context, int resource, ArrayList<MyScanResult> objects) {
         super(context, resource, objects);
     }
 
@@ -40,6 +40,7 @@ public class WifiListAdapter extends ArrayAdapter<ScanResult>{
         holder.intensidad.setText(String.valueOf(this.getItem(position).level));
         holder.seguridad.setText(this.getItem(position).capabilities);
         holder.frecuencia.setText(String.valueOf(this.getItem(position).frequency));
+        holder.probabilidad.setText(String.valueOf(this.getItem(position).probability));
 
         return convertView;
     }
@@ -52,6 +53,7 @@ public class WifiListAdapter extends ArrayAdapter<ScanResult>{
         public TextView intensidad;
         public TextView seguridad;
         public TextView frecuencia;
+        public TextView probabilidad;
 
         public WifiHolder(View row) {
             nombre = (TextView)row.findViewById(R.id.wifiNombre);
@@ -59,6 +61,7 @@ public class WifiListAdapter extends ArrayAdapter<ScanResult>{
             intensidad = (TextView)row.findViewById(R.id.wifiIntensidad);
             seguridad = (TextView)row.findViewById(R.id.wifiSeguridad);
             frecuencia = (TextView)row.findViewById(R.id.wifiFrecuencia);
+            probabilidad = (TextView)row.findViewById(R.id.wifiProbabilidad);
         }
     }
 }

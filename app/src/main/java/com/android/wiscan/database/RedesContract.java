@@ -23,5 +23,6 @@ public class RedesContract {
         public static final String COLUMN_NAME_LONGITUD_F = "longitud_f";
         public static final String COLUMN_NAME_NUMSCAN = "numscan";
         public static final String COLUMN_NAME_TIEMPO = "tiempo";
+        public static final String COLUMN_NAME_PROBABILIDAD = "probabilidad";
     }
 }

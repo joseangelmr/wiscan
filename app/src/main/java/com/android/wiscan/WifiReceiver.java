@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.wifi.ScanResult;
@@ -14,6 +15,8 @@ import android.widget.ListView;
 import com.android.wiscan.database.RedesContract;
 import com.android.wiscan.database.RedesDBHelper;
 import com.google.android.gms.location.LocationServices;
+
+import org.apache.http.NameValuePair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,15 +46,19 @@ public class WifiReceiver extends BroadcastReceiver{
     public void updateValues(long time, int numscan, Location ini){
         timestamp = time;
         mLocation_ini = ini;
-        //mLocation_fin = fin;
         num_scan = numscan;
     }
 
 
-
-    private long insertData(ScanResult red){
+    /*Retorna la probabilidad para esa red, durante ese escaneo*/
+    private float insertData(ScanResult red){
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
+    /*Calcular la probabilidad de aparicion de esta red*/
+        Cursor c = db.rawQuery(mDbHelper.SQL_COUNT_NETWORK,new String[]{red.BSSID});
+        c.moveToNext();
+        int detecciones = c.getInt(c.getColumnIndex("detecciones"))+1;
+        float prob = (float)detecciones/ num_scan;
 
         values.put(RedesContract.Red.COLUMN_NAME_TIEMPO, timestamp);
         values.put(RedesContract.Red.COLUMN_NAME_NUMSCAN, num_scan);
@@ -64,10 +71,12 @@ public class WifiReceiver extends BroadcastReceiver{
         values.put(RedesContract.Red.COLUMN_NAME_LATITUD_I, mLocation_ini.getLatitude());
         values.put(RedesContract.Red.COLUMN_NAME_LONGITUD_F, mLocation_fin.getLongitude());
         values.put(RedesContract.Red.COLUMN_NAME_LATITUD_F, mLocation_fin.getLatitude());
+        values.put(RedesContract.Red.COLUMN_NAME_PROBABILIDAD, prob);
 
-        long newRowId;
-        newRowId = db.insert(RedesContract.Red.TABLE_NAME,null,values);
-        return newRowId;
+        db.insert(RedesContract.Red.TABLE_NAME,null,values);
+        db.close();
+        //En vez de retornar el id de la fila, se retorna la probabilidad para esa red
+        return prob;
     }
 
     @Override
@@ -79,20 +88,18 @@ public class WifiReceiver extends BroadcastReceiver{
                         FusedLocationApi.
                         getLastLocation(mainActivity.mGoogleApiClient);
 
-        Log.v("PRUEBA_LOC_FIN",mLocation_fin.toString());
-
         WifiListAdapter adapter = ((WifiListAdapter) wifiList.getAdapter());
         adapter.clear();
         List<ScanResult> wifiScanList = mainWifiObj.getScanResults();
+        ArrayList<MyScanResult> redes = new ArrayList<MyScanResult>();
         for (ScanResult result : wifiScanList){
-            insertData(result);
-            //adapter.add(result);
+            float prob = insertData(result);
+            redes.add(new MyScanResult(result,prob));
         }
-        adapter.addAll(wifiScanList);
-        //ArrayList<ScanResult> aux = new ArrayList<ScanResult>(wifiScanList);
-        //ScanResult[] wifis = new ScanResult[wifiScanList.size()];
-        //wifiScanList.toArray(wifis);
+        adapter.addAll(redes);
         adapter.notifyDataSetChanged();
-        mainActivity.scanearRedes();
+        mainActivity.updateNumScan();
+        if(mainActivity.isScanning())
+            mainActivity.scanearRedes();
     }
 }
