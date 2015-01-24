@@ -9,14 +9,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 import android.widget.ListView;
 
 import com.android.wiscan.database.RedesContract;
 import com.android.wiscan.database.RedesDBHelper;
+import com.android.wiscan.helpers.MyScanResult;
+import com.android.wiscan.tasks.InsertDataTask;
 import com.google.android.gms.location.LocationServices;
-
-import org.apache.http.NameValuePair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +32,16 @@ public class WifiReceiver extends BroadcastReceiver{
     private Location mLocation_ini;
     private Location mLocation_fin;
     private int num_scan;
-    MainActivity mainActivity;
+    private ArrayList<MyScanResult> redes;
+
+    private MainActivity mainActivity;
 
     WifiReceiver(Context c, WifiManager wm, ListView wl){
         mainWifiObj = wm;
         wifiList = wl;
         mDbHelper = new RedesDBHelper(c);
         mainActivity = ((MainActivity) c);
+        //Eliminar el contenido de la BD cada vez que se inicia la APP
         mDbHelper.onUpgrade(mDbHelper.getWritableDatabase(),1,1);
     }
 
@@ -81,25 +83,30 @@ public class WifiReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        /*TODO Crear tarea asincrona para guardar en la BD
-        asi se previene en caso que sean muchos resultados en un scan*/
+        new InsertDataTask().execute(this);
+    }
 
+    public void saveInDB(){
         mLocation_fin = LocationServices.
-                        FusedLocationApi.
-                        getLastLocation(mainActivity.mGoogleApiClient);
+                FusedLocationApi.
+                getLastLocation(mainActivity.mGoogleApiClient);
 
-        WifiListAdapter adapter = ((WifiListAdapter) wifiList.getAdapter());
-        adapter.clear();
         List<ScanResult> wifiScanList = mainWifiObj.getScanResults();
-        ArrayList<MyScanResult> redes = new ArrayList<MyScanResult>();
+        redes = new ArrayList<MyScanResult>();
         for (ScanResult result : wifiScanList){
             float prob = insertData(result);
             redes.add(new MyScanResult(result,prob));
         }
+
+    }
+
+    public void postInUI(){
+        WifiListAdapter adapter = ((WifiListAdapter) wifiList.getAdapter());
+        adapter.clear();
         adapter.addAll(redes);
         adapter.notifyDataSetChanged();
         mainActivity.updateNumScan();
-        if(mainActivity.isScanning())
+        if(mainActivity.keepScanning())
             mainActivity.scanearRedes();
     }
 }

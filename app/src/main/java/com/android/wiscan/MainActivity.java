@@ -1,8 +1,6 @@
 package com.android.wiscan;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -25,6 +23,9 @@ import android.widget.Toast;
 
 import com.android.wiscan.database.RedesContract;
 import com.android.wiscan.database.RedesDBHelper;
+import com.android.wiscan.helpers.DialogHelper;
+import com.android.wiscan.helpers.GooglePlayCallbacks;
+import com.android.wiscan.helpers.MyScanResult;
 import com.android.wiscan.preferencias.PreferenciasActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -39,7 +40,9 @@ public class MainActivity extends ActionBarActivity {
     private ListView wifiList;
     private TextView scaneos;
 
-    public boolean isScanning() {
+    private RedesDBHelper dbHelper;
+
+    public boolean keepScanning() {
         return keep_scaning;
     }
 
@@ -83,6 +86,11 @@ public class MainActivity extends ActionBarActivity {
         scaneos.setText("Scan: "+String.valueOf(num_scan)+" / "+String.valueOf(max_scan_pref));
     }
 
+    public void deleteDB(){
+        dbHelper = new RedesDBHelper(this);
+        dbHelper.onUpgrade(dbHelper.getWritableDatabase(), 1, 1);
+    }
+
     public void scanearRedes() {
         if(num_scan<max_scan_pref && keep_scaning) {
             Location location_ini = LocationServices.
@@ -92,34 +100,21 @@ public class MainActivity extends ActionBarActivity {
                 long seconds = Calendar.getInstance().getTime().getTime();
                 if (mainWifiObj.startScan()) {
                     num_scan++;
-                    //updateNumScan();
                     wifiReceiver.updateValues(seconds, num_scan, location_ini);
                 }
             }
         }
         else {
             stop_scan();
-            //TODO crear metodo para mostrar el cuadro de exportar la data
-            //Y limpiar la DB luego de hacerlo
-          //  imprimirDBenLog();
         }
     }
 
     private void stop_scan() {
         keep_scaning = false;
         num_scan=0;
-        //updateNumScan();
         invalidateOptionsMenu();
-//        Dialog dialog = new Dialog(this);
-//        dialog.setCancelable(true);
-//        dialog.setTitle("Desea exportar o descartar la data?");
-//        dialog.show();
         DialogHelper dialogHelper = new DialogHelper(this);
         dialogHelper.showSelectionDialog();
-        //TODO OJO.. Hacer esto en el dialog helper
-        //RedesDBHelper dbHelper = new RedesDBHelper(this);
-        //Eliminacion de la BD para cada experimento
-        //dbHelper.onUpgrade(dbHelper.getWritableDatabase(),1,1);
     }
 
     public void imprimirDBenLog() {
@@ -181,6 +176,11 @@ public class MainActivity extends ActionBarActivity {
         buildGoogleApiClient();
         wifiReceiver = new WifiReceiver(this,mainWifiObj,wifiList);
         scaneos = (TextView)findViewById(R.id.scan_actual);
+
+        /*Se registra el receiver para manejar la data del scan*/
+        registerReceiver(wifiReceiver,
+                new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+
     }
 
     @Override
@@ -211,9 +211,7 @@ public class MainActivity extends ActionBarActivity {
                 invalidateOptionsMenu();
                 return true;
             case R.id.action_stop:
-                //TODO Implementar funcionalidad de exportar la data (Abrir el dialogo)
                 stop_scan();
-                //keep_scaning = false;
                 return true;
             case R.id.action_options:
                 startActivity(new Intent(MainActivity.this,
@@ -233,6 +231,17 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        unregisterReceiver(wifiReceiver);
+
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onDestroy();
+    }
+
+/*
+    @Override
     protected void onStop() {
         super.onStop();
         if (mGoogleApiClient.isConnected()) {
@@ -250,4 +259,5 @@ public class MainActivity extends ActionBarActivity {
                         new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         super.onResume();
     }
+    */
 }

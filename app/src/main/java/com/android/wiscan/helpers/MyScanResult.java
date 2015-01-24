@@ -1,4 +1,4 @@
-package com.android.wiscan;
+package com.android.wiscan.helpers;
 
 import android.net.wifi.ScanResult;
 

@@ -1,10 +1,11 @@
-package com.android.wiscan;
+package com.android.wiscan.helpers;
 
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.wiscan.MainActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
