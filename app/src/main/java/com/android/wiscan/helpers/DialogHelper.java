@@ -39,8 +39,6 @@ public class DialogHelper {
                     }
                 }).setNegativeButton("Descartar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        //Eliminacion de la BD para cada experimento
-                        mainActivity.deleteDB();
                         dialog.cancel();
                     }
                 }).create();
@@ -51,7 +49,7 @@ public class DialogHelper {
         fileNameDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                if (!false) {
+                if (!alertReady) {
                     Button button = fileNameDialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -81,16 +79,12 @@ public class DialogHelper {
             .setTitle("Fin de experimento")
             .setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    Toast.makeText(mainActivity, "SE PRESIONO GUARDAR", Toast.LENGTH_LONG).show();
                     dialog.dismiss();
                     showFileNameDialog();
                 }
             })
             .setNegativeButton("Descartar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    Toast.makeText(mainActivity, "SE PRESIONO DESCARTAR", Toast.LENGTH_LONG).show();
-                    //Eliminacion de la BD para cada experimento
-                    mainActivity.deleteDB();
                     dialog.dismiss();
                 }
             }).create();

@@ -41,8 +41,6 @@ public class WifiReceiver extends BroadcastReceiver{
         wifiList = wl;
         mDbHelper = new RedesDBHelper(c);
         mainActivity = ((MainActivity) c);
-        //Eliminar el contenido de la BD cada vez que se inicia la APP
-        mDbHelper.onUpgrade(mDbHelper.getWritableDatabase(),1,1);
     }
 
     public void updateValues(long time, int numscan, Location ini){

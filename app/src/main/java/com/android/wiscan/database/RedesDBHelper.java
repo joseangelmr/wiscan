@@ -43,11 +43,11 @@ public class RedesDBHelper extends SQLiteOpenHelper {
             RedesContract.Red.TABLE_NAME+" WHERE "+
             RedesContract.Red.COLUMN_NAME_BSSID+" = ?";
 
-    public static final String SQL_GET_PLOT_DATA =
+    /*public static final String SQL_GET_PLOT_DATA =
             "SELECT ("+RedesContract.Red.COLUMN_NAME_BSSID+") AS detecciones FROM "+
                     RedesContract.Red.TABLE_NAME+" WHERE "+
                     RedesContract.Red.COLUMN_NAME_BSSID+" = ?";
-
+    */
     public RedesDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }

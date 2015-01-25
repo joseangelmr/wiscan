@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:layout="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <TabHost android:id="@android:id/tabhost"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TabWidget android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@android:id/tabs" />
+
+            <FrameLayout android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@android:id/tabcontent" >
+
+                <LinearLayout android:id="@+id/plotIntensidad"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <include layout="@layout/data_plot"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:id="@+id/plotProbabilidad"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <include layout="@layout/data_plot"/>
+
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
+</LinearLayout>

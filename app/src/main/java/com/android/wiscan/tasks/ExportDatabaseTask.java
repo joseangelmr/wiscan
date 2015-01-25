@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,13 +14,9 @@ import com.android.wiscan.database.RedesDBHelper;
 import com.opencsv.CSVWriter;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by David on 24/01/2015.
@@ -93,6 +88,8 @@ public class ExportDatabaseTask extends AsyncTask<String,Void,Void> {
                             NS).split("#");
             datos.add(linea);
         }
+        c.close();
+        db.close();
         return datos;
     }
 
@@ -140,7 +137,6 @@ public class ExportDatabaseTask extends AsyncTask<String,Void,Void> {
     protected void onPostExecute(Void aVoid) {
         if (pDialog.isShowing())
             pDialog.dismiss();
-        mainActivity.deleteDB();
         Toast.makeText(mainActivity,"Data exportada en el archivo: "+path,Toast.LENGTH_LONG).show();
     }
 }

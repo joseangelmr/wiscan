@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -18,14 +17,15 @@
             android:value="@integer/google_play_services_version" />
         <activity
             android:name="com.android.wiscan.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:logo="@drawable/ic_action_network_wifi">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.android.wiscan.SimpleXYPlotActivity"
+            android:name=".DataPlotActivity"
             android:label="Plot" >
         </activity>
         <activity android:name=".preferencias.PreferenciasActivity"

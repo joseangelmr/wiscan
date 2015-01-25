@@ -39,18 +39,15 @@ public class MainActivity extends ActionBarActivity {
     private WifiReceiver wifiReceiver;
     private ListView wifiList;
     private TextView scaneos;
-
     private RedesDBHelper dbHelper;
+    private boolean keep_scaning = false;
+    private int num_scan=0;
+    private int max_scan_pref;
+    public GoogleApiClient mGoogleApiClient;
 
     public boolean keepScanning() {
         return keep_scaning;
     }
-
-    private boolean keep_scaning = false;
-    private int num_scan=0;
-    private int max_scan_pref;
-
-    public GoogleApiClient mGoogleApiClient;
 
     private  void buildGoogleApiClient() {
         GooglePlayCallbacks gpCallbacks;
@@ -68,15 +65,12 @@ public class MainActivity extends ActionBarActivity {
         WifiListAdapter adapter = new WifiListAdapter(this,R.layout.wifiitem,new ArrayList<MyScanResult>());
         wifiList.setAdapter(adapter);
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            //TODO Implementar funcionalidad correcta
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(),"SE SELECCIONO LA POSICION: "+position,Toast.LENGTH_SHORT).show();
-                //String aux = ((MyScanResult)adapterView.getItemAtPosition(position)).toString();
-                //Log.v("PRUEBA-ITEM-SELECT",aux);
-                Intent intent = new Intent(getApplicationContext(),SimpleXYPlotActivity.class);
-                String message = "MENSAJE DE PRUEBA";
-                intent.putExtra(Intent.EXTRA_TEXT, message);
+                MyScanResult aux = ((MyScanResult)adapterView.getItemAtPosition(position));
+                Intent intent = new Intent(getApplicationContext(),DataPlotActivity.class);
+                /*Se pasa el BSSID para graficar la data de ese AP especifico*/
+                intent.putExtra(Intent.EXTRA_TEXT, aux.BSSID);
                 startActivity(intent);
             }
         });
@@ -87,7 +81,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void deleteDB(){
-        dbHelper = new RedesDBHelper(this);
         dbHelper.onUpgrade(dbHelper.getWritableDatabase(), 1, 1);
     }
 
@@ -117,7 +110,7 @@ public class MainActivity extends ActionBarActivity {
         dialogHelper.showSelectionDialog();
     }
 
-    public void imprimirDBenLog() {
+   /* public void imprimirDBenLog() {
         RedesDBHelper DbHelper;
         DbHelper = new RedesDBHelper(this);
         SQLiteDatabase db= DbHelper.getReadableDatabase();
@@ -160,13 +153,16 @@ public class MainActivity extends ActionBarActivity {
                             NS
                     );
         }
-    }
+    }*/
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.v("PRUEBA MAIN","SE LLAMO ONCREATE");
         configurarWifiList();
+
+        dbHelper = new RedesDBHelper(this);
 
         mainWifiObj = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         if(!mainWifiObj.isWifiEnabled()){
@@ -202,6 +198,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_start:
+                deleteDB();
                 keep_scaning = true;
                 updateNumScan();
                 if(mGoogleApiClient.isConnected())
@@ -239,25 +236,4 @@ public class MainActivity extends ActionBarActivity {
         }
         super.onDestroy();
     }
-
-/*
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    protected void onPause() {
-        unregisterReceiver(wifiReceiver);
-        super.onPause();
-    }
-
-    protected void onResume() {
-        registerReceiver(wifiReceiver,
-                        new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        super.onResume();
-    }
-    */
 }
