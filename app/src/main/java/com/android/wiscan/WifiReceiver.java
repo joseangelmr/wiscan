@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.android.wiscan.database.RedesContract;
@@ -81,9 +82,15 @@ public class WifiReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        new InsertDataTask().execute(this);
-    }
+        Log.v("PRUEBA WIFI R","ENTRO EN ONRECEIVE, EN EL SCAN: "+num_scan);
+        if(mainActivity.keepScanning()) {
+            Log.v("PRUEBA WIFI R","SE LANZARA EL HILO EN EL SCAN: "+num_scan);
+            new InsertDataTask().execute(this);
+        }
+        else
+            Log.v("PRUEBA WIFI R","NO SE LANZARA EL HILO Y EL SCAN ES: "+num_scan);
 
+    }
     public void saveInDB(){
         mLocation_fin = LocationServices.
                 FusedLocationApi.
@@ -104,7 +111,11 @@ public class WifiReceiver extends BroadcastReceiver{
         adapter.addAll(redes);
         adapter.notifyDataSetChanged();
         mainActivity.updateNumScan();
-        if(mainActivity.keepScanning())
+        if(mainActivity.keepScanning()) {
+            Log.v("PRUEBA WIFI R","SIGO SCANEANDO");
             mainActivity.scanearRedes();
+        }
+        else
+            Log.v("PRUEBA WIFI R","YA NO SCANEO MAS");
     }
 }

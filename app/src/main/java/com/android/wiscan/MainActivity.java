@@ -92,10 +92,15 @@ public class MainActivity extends ActionBarActivity {
             if (location_ini != null) {
                 long seconds = Calendar.getInstance().getTime().getTime();
                 if (mainWifiObj.startScan()) {
+                    Log.v("PRUEBA SCAN","SI SE INICIO EL SCAN: "+num_scan);
                     num_scan++;
                     wifiReceiver.updateValues(seconds, num_scan, location_ini);
                 }
+                else
+                    Log.v("PRUEBA SCAN","NO NO SE INICIO EL SCAN: "+num_scan);
             }
+            else
+                Log.v("PRUEBA SCAN","LA LOCALIZACION ES NULA EN EL SCAN: "+num_scan);
         }
         else {
             stop_scan();
@@ -104,7 +109,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void stop_scan() {
         keep_scaning = false;
-        num_scan=0;
+        //num_scan=0;
         invalidateOptionsMenu();
         DialogHelper dialogHelper = new DialogHelper(this);
         dialogHelper.showSelectionDialog();
@@ -200,6 +205,7 @@ public class MainActivity extends ActionBarActivity {
             case R.id.action_start:
                 deleteDB();
                 keep_scaning = true;
+                num_scan=0;
                 updateNumScan();
                 if(mGoogleApiClient.isConnected())
                     mGoogleApiClient.reconnect();
