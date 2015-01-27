@@ -1,6 +1,7 @@
 package com.android.wiscan;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,12 +33,19 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
             holder = (WifiHolder)convertView.getTag();
         }
 
+        if(position%2==0)
+            convertView.setBackgroundColor(Color.parseColor("#CCCCCC"));
+        else
+            convertView.setBackgroundColor(Color.WHITE);
+//            convertView.setBackgroundColor(Color.parseColor("#FFA500"));
+
         holder.nombre.setText(this.getItem(position).SSID);
         holder.mac.setText(this.getItem(position).BSSID);
         holder.intensidad.setText(String.valueOf(this.getItem(position).level));
         holder.seguridad.setText(this.getItem(position).capabilities);
         holder.frecuencia.setText(String.valueOf(this.getItem(position).frequency));
         holder.probabilidad.setText(String.valueOf(this.getItem(position).probability));
+        holder.canal.setText(String.valueOf(this.getItem(position).channel));
 
         return convertView;
     }
@@ -51,6 +59,7 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
         public TextView seguridad;
         public TextView frecuencia;
         public TextView probabilidad;
+        public TextView canal;
 
         public WifiHolder(View row) {
             nombre = (TextView)row.findViewById(R.id.wifiNombre);
@@ -59,6 +68,7 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
             seguridad = (TextView)row.findViewById(R.id.wifiSeguridad);
             frecuencia = (TextView)row.findViewById(R.id.wifiFrecuencia);
             probabilidad = (TextView)row.findViewById(R.id.wifiProbabilidad);
+            canal = (TextView)row.findViewById(R.id.wifiCanal);
         }
     }
 }

@@ -50,6 +50,28 @@ public class WifiReceiver extends BroadcastReceiver{
         num_scan = numscan;
     }
 
+    public int calcularCanal(int frecuencia){
+/* CANAL, FRECUENCIA
+        1	2412
+        2	2417
+        3	2422
+        4	2427
+        5	2432
+        6	2437
+        7	2442
+        8	2447
+        9	2452
+        10	2457
+        11	2462
+        12	2467
+        13	2472
+        */
+
+        int mod = frecuencia % 2412;
+
+        int channel = (mod/5)+1;
+        return channel;
+    }
 
     /*Retorna la probabilidad para esa red, durante ese escaneo*/
     private float insertData(ScanResult red){

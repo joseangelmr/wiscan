@@ -81,28 +81,25 @@ public class DataPlotActivity extends Activity
         int formatter_id;
         if(isIntensidad) {
             nombre = "Intensidad";
-            formatter_id = Color.BLUE;
+            formatter_id = R.xml.line_point_formatter_with_plf1;
         }
         else {
             nombre = "Probabilidad";
-            formatter_id = Color.GREEN;
+            formatter_id = R.xml.line_point_formatter_with_plf2;
         }
 
         XYSeries serie = new SimpleXYSeries(domain,range,nombre);
 
-        /*LineAndPointFormatter seriesFormat = new LineAndPointFormatter();
+        LineAndPointFormatter seriesFormat = new LineAndPointFormatter();
         seriesFormat.setPointLabelFormatter(new PointLabelFormatter());
-        seriesFormat.configure(getApplicationContext(),formatter_id);*/
-        Paint lineFill = new Paint();
+        seriesFormat.configure(getApplicationContext(),formatter_id);
+        /*Paint lineFill = new Paint();
         lineFill.setAlpha(200);
         lineFill.setShader(new LinearGradient(0, 0, 0, 250, Color.WHITE, formatter_id, Shader.TileMode.MIRROR));
-
-
         StepFormatter seriesFormat = new StepFormatter(Color.rgb(0, 0,0), formatter_id);
-
         seriesFormat.getLinePaint().setStrokeWidth(5);
         seriesFormat.getLinePaint().setAntiAlias(false);
-        seriesFormat.setFillPaint(lineFill);
+        seriesFormat.setFillPaint(lineFill);*/
 
         if(isIntensidad)
             plotIntensidad.addSeries(serie, seriesFormat);
