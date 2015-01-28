@@ -132,7 +132,8 @@ public class WifiReceiver extends BroadcastReceiver{
         /*WifiListAdapter adapter = ((WifiListAdapter) ((HeaderViewListAdapter) wifiList.getAdapter()).getWrappedAdapter());*/
         WifiListAdapter adapter = (WifiListAdapter) wifiList.getAdapter();
         adapter.clear();
-        adapter.addAll(redes);
+        for (MyScanResult result:redes)
+            adapter.add(result);
         //adapter.getPosition()
         adapter.notifyDataSetChanged();
         mainActivity.updateNumScan();

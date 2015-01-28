@@ -116,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
     private void stop_scan() {
         keep_scaning = false;
         //num_scan=0;
-        invalidateOptionsMenu();
+        supportInvalidateOptionsMenu();
         DialogHelper dialogHelper = new DialogHelper(this);
         dialogHelper.showSelectionDialog();
     }
@@ -217,7 +217,7 @@ public class MainActivity extends ActionBarActivity {
                     mGoogleApiClient.reconnect();
                 else
                     mGoogleApiClient.connect();
-                invalidateOptionsMenu();
+                supportInvalidateOptionsMenu();
                 return true;
             case R.id.action_stop:
                 stop_scan();
