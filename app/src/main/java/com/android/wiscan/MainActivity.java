@@ -70,8 +70,6 @@ public class MainActivity extends ActionBarActivity {
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if(position==0)
-                    return;
                 MyScanResult aux = ((MyScanResult)adapterView.getItemAtPosition(position));
                 Intent intent = new Intent(getApplicationContext(),DataPlotActivity.class);
                 /*Se pasa el BSSID para graficar la data de ese AP especifico*/
@@ -210,6 +208,7 @@ public class MainActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case R.id.action_start:
                 deleteDB();
+                wifiReceiver.clearNetworks();
                 keep_scaning = true;
                 num_scan=0;
                 updateNumScan();

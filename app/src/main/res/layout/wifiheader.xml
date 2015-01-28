@@ -10,7 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="SSID"
-        android:layout_weight="2.2"
+        android:layout_weight="2.05"
         android:gravity="center"
         android:textStyle="bold" />
 
@@ -18,8 +18,8 @@
         android:id="@+id/headerPower"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="POWER"
-        android:layout_weight="0.6"
+        android:text="Power"
+        android:layout_weight="0.65"
         android:gravity="center"
         android:textStyle="bold" />
     <TextView
@@ -27,15 +27,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Ch"
-        android:layout_weight="0.6"
+        android:layout_weight="0.65"
         android:gravity="center"
         android:textStyle="bold" />
     <TextView
         android:id="@+id/headerProb"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="PROB"
-        android:layout_weight="0.6"
+        android:text="Prob"
+        android:layout_weight="0.65"
         android:gravity="center"
         android:textStyle="bold" />
 </LinearLayout>

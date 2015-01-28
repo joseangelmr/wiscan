@@ -20,6 +20,7 @@ import com.android.wiscan.tasks.InsertDataTask;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -36,6 +37,8 @@ public class WifiReceiver extends BroadcastReceiver{
     private int num_scan;
     private ArrayList<MyScanResult> redes;
 
+    LinkedHashMap<String,MyScanResult> mapa_redes;
+
     private MainActivity mainActivity;
 
     WifiReceiver(Context c, WifiManager wm, ListView wl){
@@ -43,6 +46,7 @@ public class WifiReceiver extends BroadcastReceiver{
         wifiList = wl;
         mDbHelper = new RedesDBHelper(c);
         mainActivity = ((MainActivity) c);
+        mapa_redes=new LinkedHashMap<String, MyScanResult>();
     }
 
     public void updateValues(long time, int numscan, Location ini){
@@ -103,6 +107,11 @@ public class WifiReceiver extends BroadcastReceiver{
         return prob;
     }
 
+    public void clearNetworks(){
+        mapa_redes.clear();
+    }
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v("PRUEBA WIFI R","ENTRO EN ONRECEIVE, EN EL SCAN: "+num_scan);
@@ -123,16 +132,26 @@ public class WifiReceiver extends BroadcastReceiver{
         redes = new ArrayList<MyScanResult>();
         for (ScanResult result : wifiScanList){
             float prob = insertData(result);
-            redes.add(new MyScanResult(result,prob));
-        }
+            MyScanResult aux = mapa_redes.get(result.BSSID);
+            if(aux!=null) { /*Si ya existe una red con ese BSSID*/
+                aux.updateDetectedResult(num_scan,result.level);
+                Log.v("PRUEBA TIMES","VALOR de timesDetected: "+aux.timesDetected);
+            }
+            else
+                mapa_redes.put(result.BSSID,new MyScanResult(result,prob));
 
+            //redes.add(new MyScanResult(result,prob));
+        }
+        for(MyScanResult result : mapa_redes.values()){
+            result.updateNotDetectedResult(num_scan);
+        }
     }
 
     public void postInUI(){
         /*WifiListAdapter adapter = ((WifiListAdapter) ((HeaderViewListAdapter) wifiList.getAdapter()).getWrappedAdapter());*/
         WifiListAdapter adapter = (WifiListAdapter) wifiList.getAdapter();
         adapter.clear();
-        for (MyScanResult result:redes)
+        for (MyScanResult result :mapa_redes.values())
             adapter.add(result);
         //adapter.getPosition()
         adapter.notifyDataSetChanged();

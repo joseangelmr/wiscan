@@ -16,6 +16,24 @@ public class MyScanResult {
     public int channel;
     public int timesDetected;
 
+
+    private void updateResult(int num_scan_actual,boolean detected,int power){
+        if(detected) {
+            this.timesDetected++;
+            this.level = power;
+        }
+        this.probability = (float)this.timesDetected/num_scan_actual;
+    }
+
+
+    public void updateDetectedResult(int num_scan_actual,int power){
+        updateResult(num_scan_actual,true,power);
+    }
+
+    public void updateNotDetectedResult(int num_scan_actual){
+        updateResult(num_scan_actual,false,0);
+    }
+
     public MyScanResult(ScanResult result, float prob) {
         this.BSSID = result.BSSID;
         this.SSID = result.SSID;
@@ -23,7 +41,7 @@ public class MyScanResult {
         this.frequency = result.frequency;
         this.level = result.level;
         this.probability = prob;
-        this.timesDetected = 0;
+        this.timesDetected = 1;
 
         int mod = result.frequency% 2412;
 
