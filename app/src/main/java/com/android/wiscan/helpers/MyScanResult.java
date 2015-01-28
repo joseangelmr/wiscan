@@ -14,6 +14,7 @@ public class MyScanResult {
     public int	level;
     public float probability;
     public int channel;
+    public int timesDetected;
 
     public MyScanResult(ScanResult result, float prob) {
         this.BSSID = result.BSSID;
@@ -22,6 +23,7 @@ public class MyScanResult {
         this.frequency = result.frequency;
         this.level = result.level;
         this.probability = prob;
+        this.timesDetected = 0;
 
         int mod = result.frequency% 2412;
 
