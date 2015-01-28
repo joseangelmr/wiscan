@@ -17,8 +17,11 @@ import java.util.ArrayList;
  */
 public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
 
+    private ArrayList<MyScanResult> items;
+
     public WifiListAdapter(Context context, int resource, ArrayList<MyScanResult> objects) {
         super(context, resource, objects);
+        items = objects;
     }
 
     @Override
@@ -40,35 +43,46 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
 //            convertView.setBackgroundColor(Color.parseColor("#FFA500"));
 
         holder.nombre.setText(this.getItem(position).SSID);
-        holder.mac.setText(this.getItem(position).BSSID);
+        //holder.mac.setText(this.getItem(position).BSSID);
         holder.intensidad.setText(String.valueOf(this.getItem(position).level));
-        holder.seguridad.setText(this.getItem(position).capabilities);
-        holder.frecuencia.setText(String.valueOf(this.getItem(position).frequency));
+        //holder.seguridad.setText(this.getItem(position).capabilities);
+        //holder.frecuencia.setText(String.valueOf(this.getItem(position).frequency));
         holder.probabilidad.setText(String.valueOf(this.getItem(position).probability));
         holder.canal.setText(String.valueOf(this.getItem(position).channel));
 
         return convertView;
     }
 
+ /*   @Override
+    public int getPosition(MyScanResult item) {
+    for(MyScanResult red : items){
+        if(red.BSSID==item.BSSID)
+            //ACTUALIZAR LOS VALORES DE ESA RED PORQUE YA EXISTE Y SALIR DEL LOOP
+            break;
+
+    }
+        return 0;
+    }*/
+
     static class WifiHolder
     {
 
         public TextView nombre;
-        public TextView mac;
+        //public TextView mac;
         public TextView intensidad;
-        public TextView seguridad;
-        public TextView frecuencia;
+        //public TextView seguridad;
+        //public TextView frecuencia;
         public TextView probabilidad;
         public TextView canal;
 
         public WifiHolder(View row) {
-            nombre = (TextView)row.findViewById(R.id.wifiNombre);
-            mac = (TextView)row.findViewById(R.id.wifiMac);
-            intensidad = (TextView)row.findViewById(R.id.wifiIntensidad);
-            seguridad = (TextView)row.findViewById(R.id.wifiSeguridad);
-            frecuencia = (TextView)row.findViewById(R.id.wifiFrecuencia);
-            probabilidad = (TextView)row.findViewById(R.id.wifiProbabilidad);
-            canal = (TextView)row.findViewById(R.id.wifiCanal);
+            nombre = (TextView)row.findViewById(R.id.wifiSSID);
+          //  mac = (TextView)row.findViewById(R.id.wifiMac);
+            intensidad = (TextView)row.findViewById(R.id.wifiPower);
+            //seguridad = (TextView)row.findViewById(R.id.wifiSeguridad);
+            //frecuencia = (TextView)row.findViewById(R.id.wifiFrecuencia);
+            probabilidad = (TextView)row.findViewById(R.id.wifiProb);
+            canal = (TextView)row.findViewById(R.id.wifiChannel);
         }
     }
 }

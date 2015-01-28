@@ -10,6 +10,7 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 
 import com.android.wiscan.database.RedesContract;
@@ -128,9 +129,11 @@ public class WifiReceiver extends BroadcastReceiver{
     }
 
     public void postInUI(){
-        WifiListAdapter adapter = ((WifiListAdapter) wifiList.getAdapter());
+        /*WifiListAdapter adapter = ((WifiListAdapter) ((HeaderViewListAdapter) wifiList.getAdapter()).getWrappedAdapter());*/
+        WifiListAdapter adapter = (WifiListAdapter) wifiList.getAdapter();
         adapter.clear();
         adapter.addAll(redes);
+        //adapter.getPosition()
         adapter.notifyDataSetChanged();
         mainActivity.updateNumScan();
         if(mainActivity.keepScanning()) {

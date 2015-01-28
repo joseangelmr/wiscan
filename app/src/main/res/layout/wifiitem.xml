@@ -1,156 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Nombre: "
-            android:id="@+id/labelNombre"
-            android:layout_weight="0.2" />
-
-        <TextView
-        android:id="@+id/wifiNombre"
-        android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:layout_weight="0.5" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="MAC:"
-            android:id="@+id/labelMAC"
-            android:layout_weight="0.2" />
-
-        <TextView
-    android:id="@+id/wifiMac"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Intensidad:"
-            android:id="@+id/labelIntensidad"
-            android:layout_weight="0.2" />
-
-        <TextView
-    android:id="@+id/wifiIntensidad"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Frecuencia:"
-            android:id="@+id/labelFrecuencia"
-            android:layout_weight="0.3" />
-
-        <TextView
-    android:id="@+id/wifiFrecuencia"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Canal: "
-            android:id="@+id/labelCanal"
-            android:layout_weight="0.2" />
-
-        <TextView
-            android:id="@+id/wifiCanal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:layout_weight="0.5" />
-
-    </LinearLayout>
-
-
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
+    android:weightSum="4">
+    <TextView
+        android:id="@+id/wifiSSID"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginBottom="1dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Probabilidad:"
-            android:id="@+id/labelProbabilidad"
-            android:layout_weight="0.3" />
-
-        <TextView
-            android:id="@+id/wifiProbabilidad"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Seguridad: "
-            android:id="@+id/labelSeguridad" />
-
-        <TextView
-    android:id="@+id/wifiSeguridad"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
-    </LinearLayout>
-
+        android:layout_weight="2.2"
+        android:gravity="center"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/wifiPower"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:gravity="center"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/wifiChannel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:gravity="center"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/wifiProb"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:gravity="center"
+        android:textStyle="bold" />
 </LinearLayout>
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!-->-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Nombre: "-->
+            <!--android:id="@+id/labelNombre"-->
+            <!--android:layout_weight="0.2" />-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/wifiNombre"-->
+        <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="left"-->
+            <!--android:layout_weight="0.5" />-->
+
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="MAC:"-->
+            <!--android:id="@+id/labelMAC"-->
+            <!--android:layout_weight="0.2" />-->
+
+        <!--<TextView-->
+    <!--android:id="@+id/wifiMac"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5" />-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Intensidad:"-->
+            <!--android:id="@+id/labelIntensidad"-->
+            <!--android:layout_weight="0.2" />-->
+
+        <!--<TextView-->
+    <!--android:id="@+id/wifiIntensidad"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5" />-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Frecuencia:"-->
+            <!--android:id="@+id/labelFrecuencia"-->
+            <!--android:layout_weight="0.3" />-->
+
+        <!--<TextView-->
+    <!--android:id="@+id/wifiFrecuencia"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5" />-->
+
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Canal: "-->
+            <!--android:id="@+id/labelCanal"-->
+            <!--android:layout_weight="0.2" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/wifiCanal"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="left"-->
+            <!--android:layout_weight="0.5" />-->
+
+    <!--</LinearLayout>-->
+
+
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="1dp"-->
+        <!--android:layout_marginBottom="1dp">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Probabilidad:"-->
+            <!--android:id="@+id/labelProbabilidad"-->
+            <!--android:layout_weight="0.3" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/wifiProbabilidad"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5" />-->
+
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Seguridad: "-->
+            <!--android:id="@+id/labelSeguridad" />-->
+
+        <!--<TextView-->
+    <!--android:id="@+id/wifiSeguridad"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content" />-->
+    <!--</LinearLayout>-->
+
+<!--</LinearLayout>-->

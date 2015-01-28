@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -62,11 +63,15 @@ public class MainActivity extends ActionBarActivity {
     private void configurarWifiList() {
         wifiList = (ListView)findViewById(R.id.wifiListView);
         wifiList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        //wifiList.addHeaderView(View.inflate(this, R.layout.wifiheader, null));
+        /*wifiList.setOverscrollHeader(getResources().getDrawable(R.drawable.powered_by_google_light));*/
         WifiListAdapter adapter = new WifiListAdapter(this,R.layout.wifiitem,new ArrayList<MyScanResult>());
         wifiList.setAdapter(adapter);
         wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                if(position==0)
+                    return;
                 MyScanResult aux = ((MyScanResult)adapterView.getItemAtPosition(position));
                 Intent intent = new Intent(getApplicationContext(),DataPlotActivity.class);
                 /*Se pasa el BSSID para graficar la data de ese AP especifico*/
@@ -74,6 +79,7 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+        //wifiList.addHeaderView(getLayoutInflater().inflate(R.layout.wifiheader,getconte));
     }
 
     public void updateNumScan() {
