@@ -134,7 +134,7 @@ public class WifiReceiver extends BroadcastReceiver{
             float prob = insertData(result);
             MyScanResult aux = mapa_redes.get(result.BSSID);
             if(aux!=null) { /*Si ya existe una red con ese BSSID*/
-                aux.updateDetectedResult(num_scan,result.level);
+                aux.updateDetectedResult(num_scan, result.level);
                 Log.v("PRUEBA TIMES","VALOR de timesDetected: "+aux.timesDetected);
             }
             else
@@ -145,6 +145,11 @@ public class WifiReceiver extends BroadcastReceiver{
         for(MyScanResult result : mapa_redes.values()){
             result.updateNotDetectedResult(num_scan);
         }
+        if(mapa_redes.size()>0) {
+            float dRate = (float) wifiScanList.size() / mapa_redes.size();
+            mainActivity.setDiscoveryRate(dRate);
+        }
+
     }
 
     public void postInUI(){

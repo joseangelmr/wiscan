@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -22,7 +19,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.wiscan.database.RedesContract;
 import com.android.wiscan.database.RedesDBHelper;
 import com.android.wiscan.helpers.DialogHelper;
 import com.android.wiscan.helpers.GooglePlayCallbacks;
@@ -40,11 +36,23 @@ public class MainActivity extends ActionBarActivity {
     private WifiReceiver wifiReceiver;
     private ListView wifiList;
     private TextView scaneos;
+    private TextView discovery_rate;
     private RedesDBHelper dbHelper;
     private boolean keep_scaning = false;
     private int num_scan=0;
     private int max_scan_pref;
     public GoogleApiClient mGoogleApiClient;
+
+    private float discoveryRate=0;
+
+    public void setDiscoveryRate(float discoveryRate) {
+        this.discoveryRate = discoveryRate;
+    }
+
+
+
+
+
 
     public boolean keepScanning() {
         return keep_scaning;
@@ -82,6 +90,8 @@ public class MainActivity extends ActionBarActivity {
 
     public void updateNumScan() {
         scaneos.setText("Scan: "+String.valueOf(num_scan)+" / "+String.valueOf(max_scan_pref));
+
+        discovery_rate.setText("Disc. rate: " + String.valueOf(discoveryRate));
     }
 
     public void deleteDB(){
@@ -181,6 +191,8 @@ public class MainActivity extends ActionBarActivity {
         buildGoogleApiClient();
         wifiReceiver = new WifiReceiver(this,mainWifiObj,wifiList);
         scaneos = (TextView)findViewById(R.id.scan_actual);
+
+        discovery_rate = (TextView)findViewById(R.id.discovery_rate);
 
         /*Se registra el receiver para manejar la data del scan*/
         registerReceiver(wifiReceiver,

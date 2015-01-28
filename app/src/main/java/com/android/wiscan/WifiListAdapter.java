@@ -47,7 +47,9 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
         holder.intensidad.setText(String.valueOf(this.getItem(position).level));
         //holder.seguridad.setText(this.getItem(position).capabilities);
         //holder.frecuencia.setText(String.valueOf(this.getItem(position).frequency));
-        holder.probabilidad.setText(String.valueOf(this.getItem(position).probability));
+
+
+        holder.probabilidad.setText(String.format("%.3f",this.getItem(position).probability));
         holder.canal.setText(String.valueOf(this.getItem(position).channel));
 
         return convertView;
