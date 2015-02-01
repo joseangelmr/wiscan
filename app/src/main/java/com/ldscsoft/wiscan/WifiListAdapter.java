@@ -17,8 +17,13 @@ import java.util.ArrayList;
  */
 public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
 
+    private int colorPrimario;
+    private int colorSecundario;
+
     public WifiListAdapter(Context context, int resource, ArrayList<MyScanResult> objects) {
         super(context, resource, objects);
+        colorPrimario= getContext().getResources().getColor(R.color.action_bar_blue);
+        colorSecundario = Color.WHITE;
     }
 
     @Override
@@ -33,10 +38,14 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
             holder = (WifiHolder)convertView.getTag();
         }
 
-        if(position%2==0)
-            convertView.setBackgroundColor(Color.parseColor("#CCCCCC"));
-        else
-            convertView.setBackgroundColor(Color.WHITE);
+        if(position%2==0) {
+            convertView.setBackgroundColor(colorPrimario);
+            holder.setTextColor(colorSecundario);
+        }
+        else{
+            convertView.setBackgroundColor(colorSecundario);
+            holder.setTextColor(colorPrimario);
+        }
 
         holder.nombre.setText(this.getItem(position).SSID);
         holder.intensidad.setText(String.valueOf(this.getItem(position).level));
@@ -59,6 +68,12 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
             intensidad = (TextView)row.findViewById(R.id.wifiPower);
             probabilidad = (TextView)row.findViewById(R.id.wifiProb);
             canal = (TextView)row.findViewById(R.id.wifiChannel);
+        }
+        public void setTextColor(int color){
+            nombre.setTextColor(color);
+            intensidad.setTextColor(color);
+            probabilidad.setTextColor(color);
+            canal.setTextColor(color);
         }
     }
 }

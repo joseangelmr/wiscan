@@ -2,7 +2,16 @@
 <resources>
 
     <string name="app_name">WiScan</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="plot">Gráficos</string>
+    <string name="action_start">Iniciar</string>
+    <string name="action_stop">Detener</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="action_about">Acerca de</string>
+    <string name="version">V-1.0</string>
+    <string name="about_text">"Esta aplicación se crea a partir de las ideas planteadas en el artículo: \"Access Point Discovery in 802.11 Networks\", con el fin de ayudar a estudiar y solucionar los problemas allí planteados"
+    </string>
+    <string name="about_credits">"Créditos:\n\nAndrés Arcia: Diseñador\nDavid Cadavid: Diseñador / Programador\nLuis Santiago: Diseñador / Programador\n"
+    </string>
+    <string name="about_contact">"Contacto:\n\ncadavid219@gmail.com\nld.713.santiago@gmail.com"</string>
 
 </resources>

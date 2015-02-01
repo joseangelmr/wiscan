@@ -1,20 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
     <item android:id="@+id/action_start"
-        android:title="Iniciar"
+        android:title="@string/action_start"
         app:showAsAction="ifRoom"/>
 
     <item android:id="@+id/action_stop"
-        android:title="Detener"
+        android:title="@string/action_stop"
         app:showAsAction="ifRoom"
         android:enabled="false"/>
 
     <item android:id="@+id/action_options"
-        android:title="Opciones"
+        android:title="@string/action_settings"
         app:showAsAction="ifRoom"/>
 
     <item android:id="@+id/action_credits"
-        android:title="Créditos"
+        android:title="@string/action_about"
         app:showAsAction="ifRoom"/>
 </menu>

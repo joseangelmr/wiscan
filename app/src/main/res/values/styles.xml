@@ -1,10 +1,24 @@
-<resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <!--<item name="android:textColor">@android:color/white</item>-->
-        <!--<item name="android:fontFamily">@android:</item>-->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>    <!-- the theme applied to the application or activity -->
+    <style name="WiScanActionBarTheme"
+        parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/WiScanActionBar</item>
+        <!--<item name="android:textViewStyle">@style/WiScanTextView</item>-->
+    </style>
+    <!-- ActionBar styles -->
+    <style name="WiScanActionBar"
+        parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/action_bar_blue</item>
+        <item name="backgroundSplit">@color/action_bar_blue</item>
+        <item name="background">@color/action_bar_blue</item>
     </style>
 
+    <style name="WiScanTextView" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/action_bar_blue</item>
+    </style>
+
+    <!--<style name="TabHostStyle">-->
+        <!--<item name="android:textColor">@color/white</item>-->
+    <!--</style>-->
 </resources>

@@ -39,7 +39,8 @@
         android:weightSum="2"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
-        android:id="@+id/clickablelayout">
+        android:id="@+id/clickablelayout"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -75,7 +76,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/chart_area_up"
-                android:id="@+id/graficar"/>
+                android:id="@+id/graficar"
+                android:contentDescription="Ver gráficas" />
 
         </LinearLayout>
 
@@ -90,10 +92,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:drawSelectorOnTop="false"
-        android:listSelector="@android:color/white"
-        android:layout_below="@+id/scan_actual"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="false">
+        android:listSelector="@android:color/white">
     </ListView>
 
 </LinearLayout>

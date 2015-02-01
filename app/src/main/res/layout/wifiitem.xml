@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="2.05"
         android:gravity="center"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
     <TextView
         android:id="@+id/wifiPower"
         android:layout_width="0dp"

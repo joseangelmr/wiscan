@@ -8,11 +8,11 @@ import com.ldscsoft.wiscan.R;
 /**
  * Created by David on 31/01/2015.
  */
-public class CreditosActivity extends ActionBarActivity {
+public class AcercaDeActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_creditos);
+        setContentView(R.layout.activity_about);
     }
 }

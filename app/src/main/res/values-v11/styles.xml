@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="WiScanActionBarTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/WiScanActionBar</item>
+        <!--<item name="android:textViewStyle">@style/WiScanTextView</item>-->
+    </style>
+</resources>

@@ -27,7 +27,6 @@ import com.ldscsoft.wiscan.database.RedesDBHelper;
 import com.ldscsoft.wiscan.helpers.DialogHelper;
 import com.ldscsoft.wiscan.helpers.GooglePlayCallbacks;
 import com.ldscsoft.wiscan.helpers.MyScanResult;
-import com.ldscsoft.wiscan.helpers.Utilidades;
 import com.ldscsoft.wiscan.preferencias.PreferenciasActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -237,7 +236,7 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             case R.id.action_credits:
                 startActivity(new Intent(MainActivity.this,
-                        CreditosActivity.class));
+                        AcercaDeActivity.class));
             default:
                 return super.onOptionsItemSelected(item);
         }
