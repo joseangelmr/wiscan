@@ -8,7 +8,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.wiscan.MainActivity;
+import com.android.wiscan.activities.MainActivity;
 import com.android.wiscan.database.RedesContract;
 import com.android.wiscan.database.RedesDBHelper;
 import com.opencsv.CSVWriter;
@@ -50,9 +50,9 @@ public class ExportDatabaseTask extends AsyncTask<String,Void,Void> {
                 RedesContract.Red.COLUMN_NAME_LATITUD_I+"#"+
                 RedesContract.Red.COLUMN_NAME_SSID+"#"+
                 RedesContract.Red.COLUMN_NAME_INTENSIDAD+"#"+
-                RedesContract.Red.COLUMN_NAME_FRECUENCIA+"#"+
+                RedesContract.Red.COLUMN_NAME_CANAL +"#"+
                 RedesContract.Red.COLUMN_NAME_SEGURIDAD+"#"+
-                RedesContract.Red.COLUMN_NAME_TIEMPO+"#"+
+                RedesContract.Red.COLUMN_NAME_TIEMPO_INI +"#"+
                 RedesContract.Red.COLUMN_NAME_LONGITUD_F+"#"+
                 RedesContract.Red.COLUMN_NAME_LATITUD_F+"#"+
                 RedesContract.Red.COLUMN_NAME_PROBABILIDAD+"#"+
@@ -62,13 +62,13 @@ public class ExportDatabaseTask extends AsyncTask<String,Void,Void> {
             String BSSID = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_BSSID));
             String SSID = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_SSID));
             String NIVEL = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_INTENSIDAD));
-            String FREC = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_FRECUENCIA));
+            String FREC = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_CANAL));
             String SEGU = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_SEGURIDAD));
             String LONGI_I = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LONGITUD_I));
             String LATI_I = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LATITUD_I));
             String LONGI_F = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LONGITUD_F));
             String LATI_F = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_LATITUD_F));
-            String TIME = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_TIEMPO));
+            String TIME = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_TIEMPO_INI));
             String NS = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_NUMSCAN));
             String PROB = c.getString(c.getColumnIndex(RedesContract.Red.COLUMN_NAME_PROBABILIDAD));
 

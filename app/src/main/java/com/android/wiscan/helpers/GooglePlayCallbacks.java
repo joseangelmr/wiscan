@@ -1,16 +1,11 @@
 package com.android.wiscan.helpers;
 
-import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.android.wiscan.MainActivity;
+import com.android.wiscan.activities.MainActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-
-import java.util.Calendar;
 
 /**
  * Created by David on 22/01/2015.
@@ -35,6 +30,6 @@ public class GooglePlayCallbacks implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(mActivity,"FALLO LA CONEXION A GOOGLE PLAY",Toast.LENGTH_LONG).show();
+        Toast.makeText(mActivity,"FALLO LA CONEXION A GOOGLE PLAY SERVICES",Toast.LENGTH_LONG).show();
     }
 }

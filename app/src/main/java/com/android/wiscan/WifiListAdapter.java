@@ -17,11 +17,8 @@ import java.util.ArrayList;
  */
 public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
 
-    private ArrayList<MyScanResult> items;
-
     public WifiListAdapter(Context context, int resource, ArrayList<MyScanResult> objects) {
         super(context, resource, objects);
-        items = objects;
     }
 
     @Override
@@ -40,13 +37,10 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
             convertView.setBackgroundColor(Color.parseColor("#CCCCCC"));
         else
             convertView.setBackgroundColor(Color.WHITE);
-//            convertView.setBackgroundColor(Color.parseColor("#FFA500"));
 
         holder.nombre.setText(this.getItem(position).SSID);
-        //holder.mac.setText(this.getItem(position).BSSID);
         holder.intensidad.setText(String.valueOf(this.getItem(position).level));
-        //holder.seguridad.setText(this.getItem(position).capabilities);
-        //holder.frecuencia.setText(String.valueOf(this.getItem(position).frequency));
+
 
 
         holder.probabilidad.setText(String.format("%.3f",this.getItem(position).probability));
@@ -55,18 +49,7 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
         return convertView;
     }
 
- /*   @Override
-    public int getPosition(MyScanResult item) {
-    for(MyScanResult red : items){
-        if(red.BSSID==item.BSSID)
-            //ACTUALIZAR LOS VALORES DE ESA RED PORQUE YA EXISTE Y SALIR DEL LOOP
-            break;
-
-    }
-        return 0;
-    }*/
-
-    static class WifiHolder
+     private static class WifiHolder
     {
 
         public TextView nombre;

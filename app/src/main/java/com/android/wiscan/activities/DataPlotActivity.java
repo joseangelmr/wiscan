@@ -1,4 +1,4 @@
-package com.android.wiscan;
+package com.android.wiscan.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TabHost;
 
+import com.android.wiscan.R;
 import com.android.wiscan.tasks.ReadPlotDataTask;
 import com.androidplot.ui.AnchorPosition;
 import com.androidplot.ui.XLayoutStyle;

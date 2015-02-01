@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.wiscan.MainActivity;
+import com.android.wiscan.activities.MainActivity;
 import com.android.wiscan.tasks.ExportDatabaseTask;
 
 /**

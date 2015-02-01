@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.android.wiscan.DataPlotActivity;
+import com.android.wiscan.activities.DataPlotActivity;
 import com.android.wiscan.database.RedesContract;
 import com.android.wiscan.database.RedesDBHelper;
 

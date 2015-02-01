@@ -3,6 +3,7 @@ package com.android.wiscan.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import static com.android.wiscan.database.RedesContract.Red;
 
 /**
  * Created by David on 16/01/2015.
@@ -18,30 +19,30 @@ public class RedesDBHelper extends SQLiteOpenHelper {
     private static final String INTEGER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + RedesContract.Red.TABLE_NAME + " (" +
-                    RedesContract.Red._ID + INTEGER_TYPE+" PRIMARY KEY AUTOINCREMENT," +
-                    RedesContract.Red.COLUMN_NAME_TIEMPO + TEXT_TYPE + COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_NUMSCAN + INTEGER_TYPE + COMMA_SEP +
+            "CREATE TABLE " + Red.TABLE_NAME + " (" +
+                    Red._ID + INTEGER_TYPE+" PRIMARY KEY AUTOINCREMENT," +
+                    Red.COLUMN_NAME_TIEMPO_INI + TEXT_TYPE + COMMA_SEP +
+                    Red.COLUMN_NAME_NUMSCAN + INTEGER_TYPE + COMMA_SEP +
 
-                    RedesContract.Red.COLUMN_NAME_BSSID + TEXT_TYPE + COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_SSID + TEXT_TYPE + COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_SEGURIDAD + TEXT_TYPE + COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_FRECUENCIA + INTEGER_TYPE + COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_INTENSIDAD + INTEGER_TYPE + COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_LATITUD_I + REAL_TYPE+ COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_LONGITUD_I + REAL_TYPE + COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_LATITUD_F + REAL_TYPE+ COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_LONGITUD_F + REAL_TYPE + COMMA_SEP +
-                    RedesContract.Red.COLUMN_NAME_PROBABILIDAD + REAL_TYPE +
+                    Red.COLUMN_NAME_BSSID + TEXT_TYPE + COMMA_SEP +
+                    Red.COLUMN_NAME_SSID + TEXT_TYPE + COMMA_SEP +
+                    Red.COLUMN_NAME_SEGURIDAD + TEXT_TYPE + COMMA_SEP +
+                    Red.COLUMN_NAME_CANAL + INTEGER_TYPE + COMMA_SEP +
+                    Red.COLUMN_NAME_INTENSIDAD + INTEGER_TYPE + COMMA_SEP +
+                    Red.COLUMN_NAME_LATITUD_I + REAL_TYPE+ COMMA_SEP +
+                    Red.COLUMN_NAME_LONGITUD_I + REAL_TYPE + COMMA_SEP +
+                    Red.COLUMN_NAME_LATITUD_F + REAL_TYPE+ COMMA_SEP +
+                    Red.COLUMN_NAME_LONGITUD_F + REAL_TYPE + COMMA_SEP +
+                    Red.COLUMN_NAME_PROBABILIDAD + REAL_TYPE +
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + RedesContract.Red.TABLE_NAME;
 
     public static final String SQL_COUNT_NETWORK =
-            "SELECT COUNT("+RedesContract.Red.COLUMN_NAME_BSSID+") AS detecciones FROM "+
-            RedesContract.Red.TABLE_NAME+" WHERE "+
-            RedesContract.Red.COLUMN_NAME_BSSID+" = ?";
+            "SELECT COUNT("+Red.COLUMN_NAME_BSSID+") AS detecciones FROM "+
+            Red.TABLE_NAME+" WHERE "+
+            Red.COLUMN_NAME_BSSID+" = ?";
 
     /*public static final String SQL_GET_PLOT_DATA =
             "SELECT ("+RedesContract.Red.COLUMN_NAME_BSSID+") AS detecciones FROM "+
