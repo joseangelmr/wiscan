@@ -1,4 +1,4 @@
-package com.android.wiscan.activities;
+package com.ldscsoft.wiscan.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,20 +16,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.wiscan.R;
-import com.android.wiscan.WifiListAdapter;
-import com.android.wiscan.WifiReceiver;
-import com.android.wiscan.database.RedesDBHelper;
-import com.android.wiscan.helpers.DialogHelper;
-import com.android.wiscan.helpers.GooglePlayCallbacks;
-import com.android.wiscan.helpers.MyScanResult;
-import com.android.wiscan.helpers.Utilidades;
-import com.android.wiscan.preferencias.PreferenciasActivity;
+import com.ldscsoft.wiscan.R;
+import com.ldscsoft.wiscan.WifiListAdapter;
+import com.ldscsoft.wiscan.WifiReceiver;
+import com.ldscsoft.wiscan.database.RedesDBHelper;
+import com.ldscsoft.wiscan.helpers.DialogHelper;
+import com.ldscsoft.wiscan.helpers.GooglePlayCallbacks;
+import com.ldscsoft.wiscan.helpers.MyScanResult;
+import com.ldscsoft.wiscan.helpers.Utilidades;
+import com.ldscsoft.wiscan.preferencias.PreferenciasActivity;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
@@ -63,17 +62,17 @@ public class MainActivity extends ActionBarActivity {
     private int networkCount=0;
     private float scanTime=0;
 
-    private ArrayList<Integer> networkCountList;
-    private ArrayList<Float> discoveryRatetList;
+    /*private ArrayList<Integer> networkCountList;
+    private ArrayList<Float> discoveryRatetList;*/
 
     public void setTextViewValues(float discoveryrate,float scantime,int networkcount) {
         this.discoveryRate = discoveryrate;
         this.scanTime = scantime;
         this.networkCount = networkcount;
 
-        Log.v("PRUEBA DE LISTAS","VALOR DE NUM SCAN: "+num_scan);
+        /*Log.v("PRUEBA DE LISTAS","VALOR DE NUM SCAN: "+num_scan);
         discoveryRatetList.add(num_scan-1,discoveryRate);
-        networkCountList.add(num_scan-1,networkCount);
+        networkCountList.add(num_scan-1,networkCount);*/
 
     }
 
@@ -110,9 +109,9 @@ public class MainActivity extends ActionBarActivity {
 
     public void updateTextViews() {
         scaneos.setText("Scan: "+String.valueOf(num_scan)+" / "+String.valueOf(max_scan_pref));
-        discovery_rate.setText("Disc. rate: " + String.valueOf(discoveryRate));
+        discovery_rate.setText(String.format("Disc. rate: %.3f",discoveryRate));
         network_count.setText("Redes detec.: " + String.valueOf(networkCount));
-        scan_time.setText("Tiempo de scan: " + String.valueOf(scanTime));
+        scan_time.setText(String.format("Tiempo Scan(s): %.3f",scanTime/1000));
     }
 
     public void deleteDB(){
@@ -159,8 +158,8 @@ public class MainActivity extends ActionBarActivity {
 
         dbHelper = new RedesDBHelper(this);
 
-        networkCountList = new ArrayList<Integer>();
-        discoveryRatetList = new ArrayList<Float>();
+//        networkCountList = new ArrayList<Integer>();
+//        discoveryRatetList = new ArrayList<Float>();
 
         mainWifiObj = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         if(!mainWifiObj.isWifiEnabled()){
@@ -172,23 +171,23 @@ public class MainActivity extends ActionBarActivity {
         }
         buildGoogleApiClient();
         wifiReceiver = new WifiReceiver(this,mainWifiObj,wifiList);
+
     /*Inicializacion de los TextView*/
         scaneos = (TextView)findViewById(R.id.scan_actual);
         discovery_rate = (TextView)findViewById(R.id.discovery_rate);
         scan_time= (TextView)findViewById(R.id.scan_time);
         network_count = (TextView)findViewById(R.id.network_count);
-
         boton_graficar = (ImageButton) findViewById(R.id.graficar);
-        boton_graficar.setOnClickListener(new View.OnClickListener() {
+/*        boton_graficar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MainValuesPlotActivity.class);
 
-                intent.putExtra("NETWORK_COUNT", Utilidades.toInt((networkCountList.toArray(new Integer[networkCountList.size()]))));
-                intent.putExtra("DISCOVERY_RATE", Utilidades.toFloat((discoveryRatetList.toArray(new Float[discoveryRatetList.size()]))));
+//                intent.putExtra("NETWORK_COUNT", Utilidades.toInt((networkCountList.toArray(new Integer[networkCountList.size()]))));
+//                intent.putExtra("DISCOVERY_RATE", Utilidades.toFloat((discoveryRatetList.toArray(new Float[discoveryRatetList.size()]))));
                 startActivity(intent);
             }
-        });
+        });*/
 
 
         /*Se registra el receiver para manejar la data del scan*/
@@ -209,6 +208,8 @@ public class MainActivity extends ActionBarActivity {
         menu.getItem(0).setEnabled(!keep_scaning);
         menu.getItem(1).setEnabled(keep_scaning);
         menu.getItem(2).setEnabled(!keep_scaning);
+
+        boton_graficar.setEnabled(!keep_scaning);
         return super.onPrepareOptionsMenu(menu);
     }
 

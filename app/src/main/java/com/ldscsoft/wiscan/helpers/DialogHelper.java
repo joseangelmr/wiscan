@@ -1,4 +1,4 @@
-package com.android.wiscan.helpers;
+package com.ldscsoft.wiscan.helpers;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -7,8 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.wiscan.activities.MainActivity;
-import com.android.wiscan.tasks.ExportDatabaseTask;
+import com.ldscsoft.wiscan.activities.MainActivity;
+import com.ldscsoft.wiscan.tasks.ExportDatabaseTask;
 
 /**
  * Created by David on 22/01/2015.

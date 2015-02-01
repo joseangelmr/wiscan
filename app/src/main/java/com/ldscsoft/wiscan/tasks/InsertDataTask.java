@@ -1,9 +1,9 @@
 
-package com.android.wiscan.tasks;
+package com.ldscsoft.wiscan.tasks;
 
 import android.os.AsyncTask;
 
-import com.android.wiscan.WifiReceiver;
+import com.ldscsoft.wiscan.WifiReceiver;
 
 
 /**

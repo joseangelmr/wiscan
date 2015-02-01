@@ -1,4 +1,4 @@
-package com.android.wiscan;
+package com.ldscsoft.wiscan;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.android.wiscan.helpers.MyScanResult;
+import com.ldscsoft.wiscan.helpers.MyScanResult;
 
 import java.util.ArrayList;
 
@@ -40,9 +40,6 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
 
         holder.nombre.setText(this.getItem(position).SSID);
         holder.intensidad.setText(String.valueOf(this.getItem(position).level));
-
-
-
         holder.probabilidad.setText(String.format("%.3f",this.getItem(position).probability));
         holder.canal.setText(String.valueOf(this.getItem(position).channel));
 
@@ -53,19 +50,13 @@ public class WifiListAdapter extends ArrayAdapter<MyScanResult>{
     {
 
         public TextView nombre;
-        //public TextView mac;
         public TextView intensidad;
-        //public TextView seguridad;
-        //public TextView frecuencia;
         public TextView probabilidad;
         public TextView canal;
 
         public WifiHolder(View row) {
             nombre = (TextView)row.findViewById(R.id.wifiSSID);
-          //  mac = (TextView)row.findViewById(R.id.wifiMac);
             intensidad = (TextView)row.findViewById(R.id.wifiPower);
-            //seguridad = (TextView)row.findViewById(R.id.wifiSeguridad);
-            //frecuencia = (TextView)row.findViewById(R.id.wifiFrecuencia);
             probabilidad = (TextView)row.findViewById(R.id.wifiProb);
             canal = (TextView)row.findViewById(R.id.wifiChannel);
         }

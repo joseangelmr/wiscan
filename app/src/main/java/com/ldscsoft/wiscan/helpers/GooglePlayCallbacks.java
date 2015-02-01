@@ -1,9 +1,9 @@
-package com.android.wiscan.helpers;
+package com.ldscsoft.wiscan.helpers;
 
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.android.wiscan.activities.MainActivity;
+import com.ldscsoft.wiscan.activities.MainActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 

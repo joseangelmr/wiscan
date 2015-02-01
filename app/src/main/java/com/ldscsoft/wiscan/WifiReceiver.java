@@ -1,10 +1,9 @@
-package com.android.wiscan;
+package com.ldscsoft.wiscan;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.wifi.ScanResult;
@@ -12,17 +11,18 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 import android.widget.ListView;
 
-import com.android.wiscan.activities.MainActivity;
-import com.android.wiscan.database.RedesContract;
-import com.android.wiscan.database.RedesDBHelper;
-import com.android.wiscan.helpers.MyScanResult;
-import com.android.wiscan.tasks.InsertDataTask;
+import com.ldscsoft.wiscan.activities.MainActivity;
+import com.ldscsoft.wiscan.database.RedesContract;
+import com.ldscsoft.wiscan.database.RedesDBHelper;
+import com.ldscsoft.wiscan.helpers.MyScanResult;
+import com.ldscsoft.wiscan.tasks.InsertDataTask;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static com.ldscsoft.wiscan.database.RedesContract.Red;
 /**
  * Created by David on 15/01/2015.
  */
@@ -36,6 +36,8 @@ public class WifiReceiver extends BroadcastReceiver{
     private Location mLocation_ini;
     private Location mLocation_fin;
     private int num_scan;
+    private float discoveryRate =0;
+    private int totalNetworks=0;
 
     private LinkedHashMap<String,MyScanResult> mapaRedes;
     private MainActivity mainActivity;
@@ -54,39 +56,35 @@ public class WifiReceiver extends BroadcastReceiver{
         num_scan = numscan;
     }
 
-    private float insertData(MyScanResult red,int numeroDeScaneo){
+    private void insertData(MyScanResult red,int numeroDeScaneo){
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-    /*Calcular la probabilidad de aparicion de esta red*/
-        Cursor c = db.rawQuery(mDbHelper.SQL_COUNT_NETWORK,new String[]{red.BSSID});
-        c.moveToNext();
-        int detecciones = c.getInt(c.getColumnIndex("detecciones"))+1;
-        float prob = (float)detecciones/ num_scan;
 
-        values.put(RedesContract.Red.COLUMN_NAME_TIEMPO_INI, time_ini);
-        values.put(RedesContract.Red.COLUMN_NAME_NUMSCAN, numeroDeScaneo);
-        values.put(RedesContract.Red.COLUMN_NAME_BSSID, red.BSSID);
-        values.put(RedesContract.Red.COLUMN_NAME_SSID, red.SSID);
-        values.put(RedesContract.Red.COLUMN_NAME_CANAL, red.frequency);
-        values.put(RedesContract.Red.COLUMN_NAME_INTENSIDAD, red.level);
-        values.put(RedesContract.Red.COLUMN_NAME_SEGURIDAD, red.capabilities);
-        values.put(RedesContract.Red.COLUMN_NAME_LONGITUD_I, mLocation_ini.getLongitude());
-        values.put(RedesContract.Red.COLUMN_NAME_LATITUD_I, mLocation_ini.getLatitude());
-        values.put(RedesContract.Red.COLUMN_NAME_LONGITUD_F, mLocation_fin.getLongitude());
-        values.put(RedesContract.Red.COLUMN_NAME_LATITUD_F, mLocation_fin.getLatitude());
-        values.put(RedesContract.Red.COLUMN_NAME_PROBABILIDAD, prob);
+    /*Valores a insertar en la BD (UN registro completo)*/
+        values.put(Red.COLUMN_NAME_NUMSCAN, numeroDeScaneo);
+        values.put(Red.COLUMN_NAME_BSSID, red.BSSID);
+        values.put(Red.COLUMN_NAME_SSID, red.SSID);
+        values.put(Red.COLUMN_NAME_CANAL, red.channel);
+        values.put(Red.COLUMN_NAME_INTENSIDAD, red.level);
+        values.put(Red.COLUMN_NAME_SEGURIDAD, red.capabilities);
+        values.put(Red.COLUMN_NAME_TIEMPO_I, time_ini);
+        values.put(Red.COLUMN_NAME_TIEMPO_F, time_fin);
+        values.put(Red.COLUMN_NAME_LONGITUD_I, mLocation_ini.getLongitude());
+        values.put(Red.COLUMN_NAME_LATITUD_I, mLocation_ini.getLatitude());
+        values.put(Red.COLUMN_NAME_LONGITUD_F, mLocation_fin.getLongitude());
+        values.put(Red.COLUMN_NAME_LATITUD_F, mLocation_fin.getLatitude());
+        values.put(Red.COLUMN_NAME_PROBABILIDAD,red.probability);
+        values.put(Red.COLUMN_NAME_DISCOVERY_RATE,discoveryRate);
+        values.put(Red.COLUMN_NAME_DETECTADA,Boolean.toString(red.detected));
+        values.put(Red.COLUMN_NAME_PROBABILIDAD,red.probability);
+        values.put(Red.COLUMN_NAME_TOTAL_REDES,totalNetworks);
 
         db.insert(RedesContract.Red.TABLE_NAME,null,values);
         db.close();
-        //En vez de retornar el id de la fila, se retorna la probabilidad para esa red
-        return prob;
     }
 
-
-
-    /*Retorna la probabilidad para esa red, durante ese escaneo*/
-    private float insertData(MyScanResult red){
-        return insertData(red,num_scan);
+    private void insertData(MyScanResult red){
+        insertData(red,num_scan);
     }
 
     public void clearNetworks(){
@@ -112,8 +110,15 @@ public class WifiReceiver extends BroadcastReceiver{
                 getLastLocation(mainActivity.mGoogleApiClient);
 
         List<ScanResult> wifiScanList = mainWifiObj.getScanResults();
+        for (ScanResult result : wifiScanList) {
+            MyScanResult aux = mapaRedes.get(result.BSSID);
+            if (aux == null) { /*Si NO existe una red con ese BSSID*/
+                totalNetworks++;
+                Log.v("PRUEBA NUMERO REDES", "VALOR de totalNetworks: " + totalNetworks);
+            }
+        }
+
         for (ScanResult result : wifiScanList){
-            //float prob = insertData(result);
             MyScanResult aux = mapaRedes.get(result.BSSID);
             if(aux!=null) { /*Si ya existe una red con ese BSSID*/
                 aux.updateDetectedResult(num_scan, result.level);
@@ -128,7 +133,7 @@ public class WifiReceiver extends BroadcastReceiver{
 
                 MyScanResult aux_save = new MyScanResult(aux);
                 aux_save.probability = 0;
-                aux_save.level=0;
+                aux_save.level=-100; /*Valor minimo en el contexto de RSSI*/
                 aux_save.detected=false;
                 for(int i =1;i<num_scan;i++){
                     insertData(aux_save,i);
@@ -142,8 +147,7 @@ public class WifiReceiver extends BroadcastReceiver{
             if(!result.detected) {
                 result.updateNotDetectedResult(num_scan);
                 MyScanResult aux_save = new MyScanResult(result);
-                aux_save.level=0;
-//                aux_save.detected=false;
+                aux_save.level=-100;
                 insertData(aux_save);
             }
             /*Para que este listo para el proximo scan
@@ -153,10 +157,9 @@ public class WifiReceiver extends BroadcastReceiver{
 
         /*Solo se verifica por si en el primer scan (y siguientes ) no detecta redes*/
         if(mapaRedes.size()>0) {
-            float dRate = (float) wifiScanList.size() / mapaRedes.size();
-            mainActivity.setTextViewValues(dRate,time_fin-time_ini,mapaRedes.size());
+            discoveryRate = (float) wifiScanList.size() / mapaRedes.size();
         }
-
+        mainActivity.setTextViewValues(discoveryRate,time_fin-time_ini,mapaRedes.size());
     }
 
     public void postInUI(){

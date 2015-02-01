@@ -1,4 +1,4 @@
-package com.android.wiscan.database;
+package com.ldscsoft.wiscan.database;
 
 import android.provider.BaseColumns;
 
@@ -22,10 +22,11 @@ public class RedesContract {
         public static final String COLUMN_NAME_LATITUD_F = "latitud_f";
         public static final String COLUMN_NAME_LONGITUD_F = "longitud_f";
         public static final String COLUMN_NAME_NUMSCAN = "num_scan";
-        public static final String COLUMN_NAME_TIEMPO_INI = "tiempo_i";
-        public static final String COLUMN_NAME_TIEMPO_FIN = "tiempo_f";
+        public static final String COLUMN_NAME_TIEMPO_I = "tiempo_i";
+        public static final String COLUMN_NAME_TIEMPO_F = "tiempo_f";
         public static final String COLUMN_NAME_PROBABILIDAD = "probabilidad";
         public static final String COLUMN_NAME_DISCOVERY_RATE = "discovery_rate";
-        public static final String COLUMN_NAME_NETWORK_DETECTED = "detectada";
+        public static final String COLUMN_NAME_DETECTADA = "detectada";
+        public static final String COLUMN_NAME_TOTAL_REDES = "total_redes";
     }
 }

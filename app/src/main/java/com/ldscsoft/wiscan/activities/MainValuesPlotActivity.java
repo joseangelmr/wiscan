@@ -1,66 +1,57 @@
-package com.android.wiscan.activities;
+package com.ldscsoft.wiscan.activities;
+
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Shader;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.TabHost;
 
-import com.android.wiscan.R;
-import com.android.wiscan.tasks.ReadPlotDataTask;
-import com.androidplot.ui.AnchorPosition;
-import com.androidplot.ui.XLayoutStyle;
-import com.androidplot.ui.YLayoutStyle;
+import com.ldscsoft.wiscan.R;
+import com.ldscsoft.wiscan.tasks.ReadPlotDataTask;
+import com.androidplot.xy.BoundaryMode;
+import com.androidplot.xy.LineAndPointFormatter;
+import com.androidplot.xy.PointLabelFormatter;
 import com.androidplot.xy.SimpleXYSeries;
+import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
-import com.androidplot.xy.*;
+import com.androidplot.xy.XYStepMode;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * A straightforward example of using AndroidPlot to plot some data.
+ * Created by David on 31/01/2015.
  */
-public class DataPlotActivity extends Activity
-{
+public class MainValuesPlotActivity extends Activity {
+
+    public MainValuesPlotActivity(){}
+
 
     private TabHost tabs;
     private XYPlot plotIntensidad;
     private XYPlot plotProbabilidad;
-    private String BSSID;
-    public String getBSSID() {
-        return BSSID;
-    }
 
+    private Integer networkCountList[];
+    private Float discoveryRatetList[];
 
 
     private void createTabs() {
-        //        Resources res = getResources();
-
         tabs=(TabHost)findViewById(android.R.id.tabhost);
         tabs.setup();
-
         /*Se agrega el primer TAB*/
-        TabHost.TabSpec spec=tabs.newTabSpec("Intensidad");
+        TabHost.TabSpec spec=tabs.newTabSpec("Redes detectadas");
         spec.setContent(R.id.plotIntensidad);
-        spec.setIndicator("Intensidad");
-        /*spec.setIndicator("",
-                res.getDrawable(android.R.drawable.ic_btn_speak_now));*/
+        spec.setIndicator("Redes detectadas");
         tabs.addTab(spec);
 
         /*Se agrega el segundo TAB*/
-        spec=tabs.newTabSpec("Probabilidad");
+        spec=tabs.newTabSpec("Discovery Rate");
         spec.setContent(R.id.plotProbabilidad);
-        spec.setIndicator("Probabilidad");
-        /*spec.setIndicator("TAB2",
-                res.getDrawable(android.R.drawable.ic_dialog_map));*/
+        spec.setIndicator("Discovery Rate");
         tabs.addTab(spec);
+
         tabs.setCurrentTab(0);
     }
 
@@ -68,41 +59,51 @@ public class DataPlotActivity extends Activity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dataplotmain);
-        BSSID = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-        Log.v("PRUEBA PLOT", "BSSID A PLOTEAR: " + BSSID);
+        /*Se le suma +1 para compensar por el scan cero*/
+        int [] intList = getIntent().getIntArrayExtra("NETWORK_COUNT");
+        networkCountList = new Integer[intList.length+1];
+        networkCountList[0] = 0;
+        for(int i=1;i<intList.length+1;i++)
+            networkCountList[i] = intList[i];
+
+        float [] floatList = getIntent().getFloatArrayExtra("DISCOVERY_RATE");
+        discoveryRatetList = new Float[floatList.length+1];
+        discoveryRatetList[0] = 0.0f;
+        for(int i=1;i<floatList.length+1;i++)
+            discoveryRatetList[i] = floatList[i];
+
+        Log.v("PRUEBA SEGUNDO PLOT","TAMANIO DE LAS LISTAS: "
+                +networkCountList.length+" y "+discoveryRatetList.length);
 
         createTabs();
 
         configurePlots();
 
-        new ReadPlotDataTask().execute(this);
+        setPlotData(true);
+
+        setPlotData(false);
+
     }
-    public void setPlotData(ArrayList<? extends Number> domain,ArrayList<? extends Number> range,boolean isIntensidad){
+    public void setPlotData(boolean isNetworks){
         String nombre;
         int formatter_id;
-        if(isIntensidad) {
-            nombre = "Intensidad";
+        XYSeries serie;
+        if(isNetworks) {
+            nombre = "Redes Detectadas vs Num. de Scan";
             formatter_id = R.xml.line_point_formatter_with_plf1;
+            serie = new SimpleXYSeries(Arrays.asList(networkCountList), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,nombre);
         }
         else {
-            nombre = "Probabilidad";
+            nombre = "Discovery Rate vs Num. de Scan";
             formatter_id = R.xml.line_point_formatter_with_plf2;
+            serie = new SimpleXYSeries(Arrays.asList(discoveryRatetList), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,nombre);
         }
 
-        XYSeries serie = new SimpleXYSeries(domain,range,nombre);
 
         LineAndPointFormatter seriesFormat = new LineAndPointFormatter();
         seriesFormat.setPointLabelFormatter(new PointLabelFormatter());
         seriesFormat.configure(getApplicationContext(),formatter_id);
-        /*Paint lineFill = new Paint();
-        lineFill.setAlpha(200);
-        lineFill.setShader(new LinearGradient(0, 0, 0, 250, Color.WHITE, formatter_id, Shader.TileMode.MIRROR));
-        StepFormatter seriesFormat = new StepFormatter(Color.rgb(0, 0,0), formatter_id);
-        seriesFormat.getLinePaint().setStrokeWidth(5);
-        seriesFormat.getLinePaint().setAntiAlias(false);
-        seriesFormat.setFillPaint(lineFill);*/
-
-        if(isIntensidad)
+        if(isNetworks)
             plotIntensidad.addSeries(serie, seriesFormat);
         else
             plotProbabilidad.addSeries(serie, seriesFormat);
@@ -113,14 +114,14 @@ public class DataPlotActivity extends Activity
         plotIntensidad = (XYPlot) tabs.getTabContentView().getChildAt(0).findViewById(R.id.mySimpleXYPlot);
         plotProbabilidad = (XYPlot) tabs.getTabContentView().getChildAt(1).findViewById(R.id.mySimpleXYPlot);
 
-        plotIntensidad.setTitle("Intensidad vs Tiempo");
-        plotProbabilidad.setTitle("Probabilidad de aparición");
+        plotIntensidad.setTitle("Redes Detectadas vs Tiempo");
+        plotProbabilidad.setTitle("DIscovery Rate");
 
         plotIntensidad.setDomainLabel("Número de Scan");
-        plotIntensidad.setRangeLabel("Intensidad");
+        plotIntensidad.setRangeLabel("Redes Detectadas");
 
         plotProbabilidad.setDomainLabel("Número de Scan");
-        plotProbabilidad.setRangeLabel("Probabilidad");
+        plotProbabilidad.setRangeLabel("Discovery Rate");
 
         plotIntensidad.setDomainStep(XYStepMode.INCREMENT_BY_VAL,1);
         plotIntensidad.setDomainValueFormat(new DecimalFormat("#"));
@@ -130,6 +131,14 @@ public class DataPlotActivity extends Activity
         plotProbabilidad.setRangeStep(XYStepMode.INCREMENT_BY_VAL,0.05);
         plotProbabilidad.setDomainValueFormat(new DecimalFormat("#"));
         plotProbabilidad.setRangeValueFormat(new DecimalFormat("#.###"));
-        plotProbabilidad.setRangeBoundaries(0,1,BoundaryMode.FIXED);
+        plotProbabilidad.setRangeBoundaries(0,1, BoundaryMode.FIXED);
     }
+
+
+
+
+
+
+
+
 }

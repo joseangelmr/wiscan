@@ -1,4 +1,4 @@
-package com.android.wiscan.helpers;
+package com.ldscsoft.wiscan.helpers;
 
 import android.net.wifi.ScanResult;
 
@@ -18,8 +18,8 @@ public class MyScanResult {
     public boolean detected;
 
 
-    private void updateResult(int num_scan_actual,boolean detected,int power){
-        if(detected) {
+    private void updateResult(int num_scan_actual,int power){
+        if(this.detected) {
             this.timesDetected++;
             this.level = power;
         }
@@ -28,13 +28,13 @@ public class MyScanResult {
 
 
     public void updateDetectedResult(int num_scan_actual,int power){
-        updateResult(num_scan_actual,true,power);
         this.detected = true;
+        updateResult(num_scan_actual,power);
     }
 
     public void updateNotDetectedResult(int num_scan_actual){
-        updateResult(num_scan_actual,false,0);
         this.detected = false;
+        updateResult(num_scan_actual,-100);
     }
 
     public MyScanResult(ScanResult result, int num_scan_actual) {
@@ -45,10 +45,7 @@ public class MyScanResult {
         this.level = result.level;
         this.timesDetected = 1;
         this.probability = (float)this.timesDetected/num_scan_actual;
-
-        int mod = result.frequency% 2412;
-        this.channel = (mod/5)+1;
-
+        channel= Utilidades.calcularCanal(frequency);
         this.detected = true;
     }
 
