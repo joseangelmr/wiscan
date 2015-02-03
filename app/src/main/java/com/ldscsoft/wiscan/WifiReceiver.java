@@ -18,6 +18,7 @@ import com.ldscsoft.wiscan.helpers.MyScanResult;
 import com.ldscsoft.wiscan.tasks.InsertDataTask;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,12 +43,17 @@ public class WifiReceiver extends BroadcastReceiver{
     private LinkedHashMap<String,MyScanResult> mapaRedes;
     private MainActivity mainActivity;
 
+    private ArrayList<Float>   discoveryRatetList;
+    private ArrayList<Integer> networkCountList;
+
     public WifiReceiver(MainActivity activity, WifiManager wm, ListView wl){
         mainWifiObj = wm;
         wifiList = wl;
         mDbHelper = activity.getDbHelper();
         mainActivity = activity;
         mapaRedes =new LinkedHashMap<String, MyScanResult>();
+        discoveryRatetList = new ArrayList<Float>();
+        networkCountList = new ArrayList<Integer>();
     }
 
     public void updateValues(long time, int numscan, Location ini){
@@ -56,7 +62,7 @@ public class WifiReceiver extends BroadcastReceiver{
         num_scan = numscan;
     }
 
-    private void insertData(MyScanResult red,int numeroDeScaneo){
+    private void insertData(MyScanResult red,int numeroDeScaneo,int numRedes,float dRate){
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -74,10 +80,10 @@ public class WifiReceiver extends BroadcastReceiver{
         values.put(Red.COLUMN_NAME_LONGITUD_F, mLocation_fin.getLongitude());
         values.put(Red.COLUMN_NAME_LATITUD_F, mLocation_fin.getLatitude());
         values.put(Red.COLUMN_NAME_PROBABILIDAD,red.probability);
-        values.put(Red.COLUMN_NAME_DISCOVERY_RATE,discoveryRate);
+        values.put(Red.COLUMN_NAME_DISCOVERY_RATE,dRate);
         values.put(Red.COLUMN_NAME_DETECTADA,Boolean.toString(red.detected));
         values.put(Red.COLUMN_NAME_PROBABILIDAD,red.probability);
-        values.put(Red.COLUMN_NAME_TOTAL_REDES,totalNetworks);
+        values.put(Red.COLUMN_NAME_TOTAL_REDES,numRedes);
 
         db.insert(RedesContract.Red.TABLE_NAME,null,values);
         db.close();
@@ -87,8 +93,14 @@ public class WifiReceiver extends BroadcastReceiver{
         insertData(red,num_scan);
     }
 
+    private void insertData(MyScanResult red,int numeroDeScaneo) {
+        insertData(red,numeroDeScaneo,totalNetworks,discoveryRate);
+    }
     public void clearNetworks(){
         mapaRedes.clear();
+        discoveryRatetList.clear();
+        networkCountList.clear();
+        totalNetworks=0;
     }
 
 
@@ -117,7 +129,13 @@ public class WifiReceiver extends BroadcastReceiver{
                 Log.v("PRUEBA NUMERO REDES", "VALOR de totalNetworks: " + totalNetworks);
             }
         }
-
+/*Solo se verifica por si en el primer scan (y siguientes ) no detecta redes*/
+        if(totalNetworks>0) {
+            discoveryRate = (float) wifiScanList.size() / totalNetworks;
+        }
+    /*Se almacenan los valores en la posicion segun el scan actual*/
+        discoveryRatetList.add(num_scan-1,discoveryRate);
+        networkCountList.add(num_scan-1,totalNetworks);
         for (ScanResult result : wifiScanList){
             MyScanResult aux = mapaRedes.get(result.BSSID);
             if(aux!=null) { /*Si ya existe una red con ese BSSID*/
@@ -136,7 +154,7 @@ public class WifiReceiver extends BroadcastReceiver{
                 aux_save.level=-100; /*Valor minimo en el contexto de RSSI*/
                 aux_save.detected=false;
                 for(int i =1;i<num_scan;i++){
-                    insertData(aux_save,i);
+                    insertData(aux_save,i,networkCountList.get(i-1),discoveryRatetList.get(i-1));
                 }
                 /*Aqui se inserta la data del scan actual*/
                 insertData(aux);
@@ -155,10 +173,10 @@ public class WifiReceiver extends BroadcastReceiver{
             result.detected=false;
         }
 
-        /*Solo se verifica por si en el primer scan (y siguientes ) no detecta redes*/
+        /*Solo se verifica por si en el primer scan (y siguientes ) no detecta redes*//*
         if(mapaRedes.size()>0) {
             discoveryRate = (float) wifiScanList.size() / mapaRedes.size();
-        }
+        }*/
         mainActivity.setTextViewValues(discoveryRate,time_fin-time_ini,mapaRedes.size());
     }
 

@@ -10,80 +10,74 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/scan_actual"
-            android:layout_weight="1"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/scan_time"
-            android:layout_weight="1"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:id="@+id/clickablelayout"
-        android:baselineAligned="false">
+        android:paddingBottom="15dp">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_weight="1.3">
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/network_count"
-            android:textStyle="bold" />
+            android:layout_weight="1.4">
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/discovery_rate"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/summary_color"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/scan_time"
+                android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/summary_color"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/scan_actual"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/summary_color"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/network_count"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/summary_color"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/discovery_rate"
+                android:textStyle="bold" />
         </LinearLayout>
+
         <LinearLayout
+            android:id="@+id/graficar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.7"
-            android:orientation="horizontal"
-            android:weightSum="1"
-            android:gravity="center_horizontal">
+            android:layout_weight="0.6"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_vertical">
 
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+            <Button
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:contentDescription="Ver gráficas"
                 android:background="@drawable/chart_area_up"
-                android:id="@+id/graficar"
-                android:contentDescription="Ver gráficas" />
+                android:padding="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/summary_color"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="bold"
+                android:text="Ver Gráficas"/>
 
         </LinearLayout>
 
-
     </LinearLayout>
-
 
     <include layout="@layout/wifiheader"/>
 

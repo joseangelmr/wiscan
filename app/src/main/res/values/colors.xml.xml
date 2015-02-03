@@ -2,4 +2,5 @@
 <resources>
     <item name="action_bar_blue" type="color">#0F70B7</item>
     <item name="white" type="color">#FFFFFF</item>
+    <item name="summary_color" type="color">#000000</item>
 </resources>

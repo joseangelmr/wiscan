@@ -15,7 +15,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +26,7 @@ import com.ldscsoft.wiscan.R;
 import com.ldscsoft.wiscan.WifiListAdapter;
 import com.ldscsoft.wiscan.WifiReceiver;
 import com.ldscsoft.wiscan.database.RedesDBHelper;
+import com.ldscsoft.wiscan.helpers.AbstractDataPlot;
 import com.ldscsoft.wiscan.helpers.DialogHelper;
 import com.ldscsoft.wiscan.helpers.GooglePlayCallbacks;
 import com.ldscsoft.wiscan.helpers.MyScanResult;
@@ -44,7 +47,8 @@ public class MainActivity extends ActionBarActivity {
     private TextView scan_time;
     private TextView network_count;
 
-    private ImageButton boton_graficar;
+    private LinearLayout boton_graficar;
+
 
     public RedesDBHelper getDbHelper() {
         return dbHelper;
@@ -60,9 +64,6 @@ public class MainActivity extends ActionBarActivity {
     private float discoveryRate=0;
     private int networkCount=0;
     private float scanTime=0;
-
-    /*private ArrayList<Integer> networkCountList;
-    private ArrayList<Float> discoveryRatetList;*/
 
     public void setTextViewValues(float discoveryrate,float scantime,int networkcount) {
         this.discoveryRate = discoveryrate;
@@ -98,19 +99,21 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 MyScanResult aux = ((MyScanResult)adapterView.getItemAtPosition(position));
-                Intent intent = new Intent(getApplicationContext(),DataPlotActivity.class);
+                Intent intent = new Intent(getApplicationContext(),NetworkPlotActivity.class);
                 /*Se pasa el BSSID para graficar la data de ese AP especifico*/
                 intent.putExtra(Intent.EXTRA_TEXT, aux.BSSID);
+                intent.putExtra(AbstractDataPlot.NAMEA, "Intensidad");
+                intent.putExtra(AbstractDataPlot.NAMEB, "Probabilidad");
                 startActivity(intent);
             }
         });
     }
 
     public void updateTextViews() {
-        scaneos.setText("Scan: "+String.valueOf(num_scan)+" / "+String.valueOf(max_scan_pref));
-        discovery_rate.setText(String.format("Disc. rate: %.3f",discoveryRate));
-        network_count.setText("Redes detec.: " + String.valueOf(networkCount));
-        scan_time.setText(String.format("Tiempo Scan(s): %.3f",scanTime/1000));
+        scaneos.setText("Escaneo actual: "+String.valueOf(num_scan)+" / "+String.valueOf(max_scan_pref));
+        discovery_rate.setText(String.format("Discovery rate: %.2f",discoveryRate));
+        network_count.setText("Redes detectadas.: " + String.valueOf(networkCount));
+        scan_time.setText(String.format("Tiempo de escaneo(s): %.2f",scanTime/1000));
     }
 
     public void deleteDB(){
@@ -176,17 +179,16 @@ public class MainActivity extends ActionBarActivity {
         discovery_rate = (TextView)findViewById(R.id.discovery_rate);
         scan_time= (TextView)findViewById(R.id.scan_time);
         network_count = (TextView)findViewById(R.id.network_count);
-        boton_graficar = (ImageButton) findViewById(R.id.graficar);
-/*        boton_graficar.setOnClickListener(new View.OnClickListener() {
+        boton_graficar = (LinearLayout) findViewById(R.id.graficar);
+        boton_graficar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MainValuesPlotActivity.class);
-
-//                intent.putExtra("NETWORK_COUNT", Utilidades.toInt((networkCountList.toArray(new Integer[networkCountList.size()]))));
-//                intent.putExtra("DISCOVERY_RATE", Utilidades.toFloat((discoveryRatetList.toArray(new Float[discoveryRatetList.size()]))));
+                Intent intent = new Intent(getApplicationContext(),ExperimentDataPlotActivity.class);
+                intent.putExtra(AbstractDataPlot.NAMEA, "Número de redes");
+                intent.putExtra(AbstractDataPlot.NAMEB, "Discovery rate");
                 startActivity(intent);
             }
-        });*/
+        });
 
 
         /*Se registra el receiver para manejar la data del scan*/

@@ -24,11 +24,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.DataPlotActivity"
+            android:name=".activities.NetworkPlotActivity"
             android:label="@string/plot" >
         </activity>
         <activity
-            android:name=".activities.MainValuesPlotActivity"
+            android:name=".activities.ExperimentDataPlotActivity"
             android:label="@string/plot" >
         </activity>
         <activity
