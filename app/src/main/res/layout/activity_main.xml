@@ -65,7 +65,8 @@
                 android:layout_height="60dp"
                 android:contentDescription="Ver gráficas"
                 android:background="@drawable/chart_area_up"
-                android:padding="5dp" />
+                android:padding="5dp"
+                android:clickable="false"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -73,7 +74,8 @@
                 android:textColor="@color/summary_color"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
-                android:text="Ver Gráficas"/>
+                android:text="Ver Gráficas"
+                android:clickable="false"/>
 
         </LinearLayout>
 

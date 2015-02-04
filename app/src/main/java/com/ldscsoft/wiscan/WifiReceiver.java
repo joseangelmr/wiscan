@@ -57,6 +57,7 @@ public class WifiReceiver extends BroadcastReceiver{
     }
 
     public void updateValues(long time, int numscan, Location ini){
+        Log.v("PRUEBA WIFI RECEIVER","ENTRO A UPDATE VALUES");
         time_ini = time;
         mLocation_ini = ini;
         num_scan = numscan;
@@ -106,9 +107,11 @@ public class WifiReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
-//        Log.v("PRUEBA WIFI R","ENTRO EN ONRECEIVE, EN EL SCAN: "+num_scan);
-        if(mainActivity.keepScanning()) {
-  //          Log.v("PRUEBA WIFI R","SE LANZARA EL HILO EN EL SCAN: "+num_scan);
+        Log.v("PRUEBA WIFI R","ENTRO EN ONRECEIVE, EN EL SCAN: "+num_scan);
+        Log.v("PRUEBA WIFI R","ACTION DEL INTENT EN ONRECEIVE: "+intent.getAction());
+        if(mainActivity.semaforo && mainActivity.keepScanning() && intent.getAction() == WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) {
+            Log.v("PRUEBA WIFI R","SE LANZARA EL HILO EN EL SCAN: "+num_scan);
+            mainActivity.semaforo = false;
             time_fin = Calendar.getInstance().getTime().getTime();
             new InsertDataTask().execute(this);
         }
@@ -121,6 +124,7 @@ public class WifiReceiver extends BroadcastReceiver{
                 FusedLocationApi.
                 getLastLocation(mainActivity.mGoogleApiClient);
 
+        Log.v("PRUEBA WIFI R LOC FIN","("+mLocation_fin.getLatitude()+","+mLocation_fin.getLongitude()+")");
         List<ScanResult> wifiScanList = mainWifiObj.getScanResults();
         for (ScanResult result : wifiScanList) {
             MyScanResult aux = mapaRedes.get(result.BSSID);
@@ -133,9 +137,13 @@ public class WifiReceiver extends BroadcastReceiver{
         if(totalNetworks>0) {
             discoveryRate = (float) wifiScanList.size() / totalNetworks;
         }
+    Log.v("PRUEBA SEMAFORO","VALOR DE SEMAFORO: "+String.valueOf(mainActivity.semaforo));
+
     /*Se almacenan los valores en la posicion segun el scan actual*/
-        discoveryRatetList.add(num_scan-1,discoveryRate);
-        networkCountList.add(num_scan-1,totalNetworks);
+    Log.v("PRUEBA SEMAFORO","TAM DE LISTA DE DISC RATE: "+String.valueOf(discoveryRatetList.size()));
+
+        discoveryRatetList.add(discoveryRate);
+        networkCountList.add(totalNetworks);
         for (ScanResult result : wifiScanList){
             MyScanResult aux = mapaRedes.get(result.BSSID);
             if(aux!=null) { /*Si ya existe una red con ese BSSID*/

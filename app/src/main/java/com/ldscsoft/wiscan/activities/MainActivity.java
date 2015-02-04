@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -22,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationRequest;
 import com.ldscsoft.wiscan.R;
 import com.ldscsoft.wiscan.WifiListAdapter;
 import com.ldscsoft.wiscan.WifiReceiver;
@@ -48,6 +51,8 @@ public class MainActivity extends ActionBarActivity {
     private TextView network_count;
 
     private LinearLayout boton_graficar;
+    public boolean semaforo =false;
+    public boolean semaforoLocation=false;
 
 
     public RedesDBHelper getDbHelper() {
@@ -65,6 +70,10 @@ public class MainActivity extends ActionBarActivity {
     private int networkCount=0;
     private float scanTime=0;
 
+    private LocationRequest mLocationRequest;
+
+    private GooglePlayCallbacks gpCallbacks;
+
     public void setTextViewValues(float discoveryrate,float scantime,int networkcount) {
         this.discoveryRate = discoveryrate;
         this.scanTime = scantime;
@@ -81,13 +90,17 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private  void buildGoogleApiClient() {
-        GooglePlayCallbacks gpCallbacks;
         gpCallbacks = new GooglePlayCallbacks(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(gpCallbacks)
                 .addOnConnectionFailedListener(gpCallbacks)
                 .addApi(LocationServices.API)
                 .build();
+
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(1000); // 1 second, in milliseconds
     }
 
     private void configurarWifiList() {
@@ -120,6 +133,23 @@ public class MainActivity extends ActionBarActivity {
         dbHelper.onUpgrade(dbHelper.getWritableDatabase(), 1, 1);
     }
 
+
+    private void checkWifiState(){
+        if(!mainWifiObj.isWifiEnabled()){
+            Toast.makeText(this,"Encendiendo Wifi",Toast.LENGTH_SHORT).show();
+            mainWifiObj.setWifiEnabled(true);
+            Log.v("PRUEBA BUCLE","ANTES DEL WHILE");
+            while(mainWifiObj.getWifiState()==WifiManager.WIFI_STATE_ENABLING);
+            Log.v("PRUEBA BUCLE","DESPUES DEL WHILE");
+
+//            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//            if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER ))
+//            {
+//                Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS );
+//                startActivity(myIntent);
+//            }
+        }
+    }
     public void scanearRedes() {
         if(num_scan<max_scan_pref && keep_scaning) {
             Location location_ini = LocationServices.
@@ -127,23 +157,32 @@ public class MainActivity extends ActionBarActivity {
                     getLastLocation(mGoogleApiClient);
             if (location_ini != null) {
                 long seconds = Calendar.getInstance().getTime().getTime();
+                Log.v("PRUEBA MAIN LOC INI","("+location_ini.getLatitude()+","+location_ini.getLongitude()+")");
+
                 if (mainWifiObj.startScan()) {
-                    //Log.v("PRUEBA SCAN","SI SE INICIO EL SCAN: "+num_scan);
+                    semaforo = true;
                     num_scan++;
+                    Log.v("PRUEBA SCAN","SI SE INICIO EL SCAN: "+num_scan);
                     wifiReceiver.updateValues(seconds, num_scan, location_ini);
                 }
                 else
                     Log.v("PRUEBA SCAN","NO NO SE INICIO EL SCAN: "+num_scan);
             }
-            else
-                Log.v("PRUEBA SCAN","LA LOCALIZACION ES NULA EN EL SCAN: "+num_scan);
+            else {
+                //if(semaforoLocation)
+                Log.v("PRUEBA SCAN", "LA LOCALIZACION ES NULA EN EL SCAN: " + num_scan);
+                semaforoLocation = true;
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, gpCallbacks);
+            }
         }
         else {
             stop_scan();
         }
+        Log.v("PRUEBA MAIN","SALIENDO DE SCANEAR REDES");
     }
 
     private void stop_scan() {
+//        disconnectLocation();
         keep_scaning = false;
         supportInvalidateOptionsMenu();
         DialogHelper dialogHelper = new DialogHelper(this);
@@ -160,17 +199,11 @@ public class MainActivity extends ActionBarActivity {
 
         dbHelper = new RedesDBHelper(this);
 
-//        networkCountList = new ArrayList<Integer>();
-//        discoveryRatetList = new ArrayList<Float>();
+
 
         mainWifiObj = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        if(!mainWifiObj.isWifiEnabled()){
-            Toast.makeText(this,"Encendiendo Wifi",Toast.LENGTH_SHORT).show();
-            mainWifiObj.setWifiEnabled(true);
-            Log.v("PRUEBA BUCLE","ANTES DEL WHILE");
-            while(mainWifiObj.getWifiState()==WifiManager.WIFI_STATE_ENABLING);
-            Log.v("PRUEBA BUCLE","DESPUES DEL WHILE");
-        }
+        checkWifiState();
+
         buildGoogleApiClient();
         wifiReceiver = new WifiReceiver(this,mainWifiObj,wifiList);
 
@@ -189,8 +222,6 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
-
-
         /*Se registra el receiver para manejar la data del scan*/
         registerReceiver(wifiReceiver,
                 new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
@@ -244,6 +275,10 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    public void disconnectLocation(){
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,gpCallbacks );
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -261,4 +296,17 @@ public class MainActivity extends ActionBarActivity {
         }
         super.onDestroy();
     }
+
+    /*@Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(wifiReceiver,
+                new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(wifiReceiver);
+        super.onPause();
+    }*/
 }
